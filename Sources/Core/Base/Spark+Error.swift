@@ -10,6 +10,7 @@ import Foundation
 // MARK: - Spark.Error
 public extension Spark {
     
+    /// `Error` is the error type returned by Spark.
     enum Error: Swift.Error {
         /// Request URL Error
         case urlError
@@ -22,6 +23,10 @@ public extension Spark {
     }
 }
 
+// MARK: - Spark.Error: Sendable
+extension Spark.Error: Sendable { }
+
+// MARK: - Spark.Error: LocalizedError
 extension Spark.Error: LocalizedError {
     var localizedDescription: String {
         switch self {
@@ -35,8 +40,6 @@ extension Spark.Error: LocalizedError {
         }
     }
 }
-// MARK: -
-
 
 // MARK: - Spark.Error.ParameterEncodingFailureReason
 public extension Spark.Error {
@@ -52,6 +55,7 @@ public extension Spark.Error {
     }
 }
 
+// MARK: - Spark.Error.ParameterEncodingFailureReason: LocalizedError
 extension Spark.Error.ParameterEncodingFailureReason: LocalizedError {
     
     var localizedDescription: String {
@@ -65,7 +69,6 @@ extension Spark.Error.ParameterEncodingFailureReason: LocalizedError {
         }
     }
 }
-// MARK: -
 
 // MARK: - Spark.Error.JSONEncodingError
 public extension Spark.Error {
@@ -73,6 +76,8 @@ public extension Spark.Error {
         case invalidJSONObject
     }
 }
+
+// MARK: - Spark.Error.JSONEncodingError: LocalizedError
 extension Spark.Error.JSONEncodingError: LocalizedError {
     var localizedDescription: String {
        """

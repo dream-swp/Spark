@@ -8,8 +8,10 @@
 
 import Foundation
 
+// MARK: - Spark.Parameters, ParameterEncoding
 public extension Spark {
     
+    /// Request Parameters
     typealias Parameters = [String: any Any & Sendable]
     
     /// Request parameter coding protocol
@@ -17,11 +19,10 @@ public extension Spark {
         
         /// - Parameters:
         ///   - urlRequest: Coding `URLRequest`
-        ///   - parameters: Coding `Parameters`, `DSParameters = [String: Any]`
+        ///   - parameters: Coding `Parameters`, `Parameters = [String: Any]`
         /// - Returns: The encoding completed URLRequest
         func encode(_ urlRequest: URLRequest, with parameters: Parameters?) throws -> URLRequest
         
     }
 }
-
-
+// MARK: -

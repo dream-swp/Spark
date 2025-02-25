@@ -7,13 +7,14 @@
 
 import Foundation
 
+
+// MARK: - Spark.URLEncodeing
 public extension Spark {
     
     struct URLEncodeing {
         
     }
 }
-
 
 extension Spark.URLEncodeing: Spark.ParameterEncoding {
     
@@ -22,3 +23,4 @@ extension Spark.URLEncodeing: Spark.ParameterEncoding {
     }
 
 }
+// MARK: -

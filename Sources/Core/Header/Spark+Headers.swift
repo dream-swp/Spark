@@ -5,26 +5,26 @@
 //  Created by Dream on 2025/2/25.
 //
 
-
+// MARK: - Spark.Headers
 public extension Spark {
     
+    /// Packaging Headers settings Request Head
     struct Headers {
-        
         
         /// Save Headers data for internal use
         private var headers: [Header] = []
         
-        /// `Headers` Initialization method
+        /// `Spark.Headers` Initialization method
         public init() {}
         
-//        /// `DSHeader` Initialization method
-//        /// - Parameter headers: [DSHeader]
+        /// `Spark.Header` Initialization method
+        /// - Parameter headers: [Header]
         public init(headers: [Header]) {
              headers.forEach { update($0) }
         }
-//        
-//        /// `DSHeader` Initialization method
-//        /// - Parameter dictionary: [name : value]
+
+        /// `Spark.Headers` Initialization method
+        /// - Parameter dictionary: [String: String]
          public init(_ dictionary: [String: String]) {
              dictionary.forEach { update(Header(name: $0.key, value: $0.value)) }
          }
@@ -47,8 +47,18 @@ public extension Spark.Headers {
     }
     
     
+    /// `[Spark.Headers]` converts to dictionary data
+    var dictionary: [String: String] {
+        let namesAndValues = headers.map { ($0.name, $0.value) }
+        return Dictionary(namesAndValues, uniquingKeysWith: { _, last in last })
+    }
+    
 }
 
+// MARK: - Spark.Headers: Equatable, Hashable, Sendable
+extension Spark.Headers: Equatable, Hashable, Sendable { }
+
+// MARK: - Spark.Headers: Collection
 extension Spark.Headers: Collection {
     public var endIndex: Int {
         headers.endIndex
@@ -67,6 +77,7 @@ extension Spark.Headers: Collection {
     }
 }
 
+// MARK: - Spark.Headers: ExpressibleByDictionaryLiteral
 extension Spark.Headers: ExpressibleByDictionaryLiteral {
     
     public init(dictionaryLiteral elements: (String, String)...) {
@@ -75,6 +86,7 @@ extension Spark.Headers: ExpressibleByDictionaryLiteral {
     
 }
 
+// MARK: - Spark.Headers: ExpressibleByArrayLiteral
 extension Spark.Headers: ExpressibleByArrayLiteral {
     
     public init(arrayLiteral elements: Spark.Header...) {
@@ -82,6 +94,7 @@ extension Spark.Headers: ExpressibleByArrayLiteral {
     }
 }
 
+// MARK: - Spark.Headers: Sequence
 extension Spark.Headers: Sequence {
     
     public func makeIterator() ->  IndexingIterator<[Spark.Header]> {
@@ -89,10 +102,11 @@ extension Spark.Headers: Sequence {
     }
 }
 
-extension Array where Element == Spark.Header {
-
+// MARK: - [Spark.Header]
+extension [Spark.Header] {
     func index(of name: String) -> Int? {
         let lowercasedName = name.lowercased()
         return firstIndex { $0.name.lowercased() == lowercasedName }
     }
 }
+// MARK: -
