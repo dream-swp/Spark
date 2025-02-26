@@ -46,21 +46,21 @@ extension Spark.Header: Equatable, Hashable, Sendable { }
 extension Spark.Header: CustomStringConvertible {
     /// Print information format,
     /// Example: `name: value`, `Content-Type: application/json"`
-    public var description: String { "\(name): \(value)" }
+    public var description: String { "\(name) : \(value)" }
 }
 
 // MARK: - Spark.Header.Key
 public extension Spark.Header {
     
-    ///
+    /// Spark Header Key
     enum Key:(String), Sendable {
-        case Accept             = "Accept"
+        case Accept
         case AcceptCharset      = "Accept-Charset"
         case AcceptLanguage     = "Accept-Language"
         case AcceptEncoding     = "Accept-Encoding"
-        case Authorization      = "Authorization"
-        case Basic              = "Basic"
-        case Bearer             = "Bearer"
+        case Authorization
+        case Basic
+        case Bearer
         case ContentDisposition = "Content-Disposition"
         case ContentEncoding    = "Content-Encoding"
         case ContentType        = "Content-Type"
@@ -125,7 +125,6 @@ public extension Spark.Header {
         authorization("\(Spark.Header.Key.Bearer) \(bearerToken)")
     }
 
-    
     ///  Returns a `Content-Disposition` header.
     /// - Parameter value: The `Content-Disposition` value.
     /// - Returns: Spark.Header

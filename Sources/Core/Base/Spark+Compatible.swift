@@ -18,8 +18,8 @@ public struct DS<DS> {
     
     /// Initialization method
     /// - Parameter ds: DS
-    public init(_ ds : DS) {
-        self.spark = ds
+    public init(_ spark : DS) {
+        self.spark = spark
     }
 }
 

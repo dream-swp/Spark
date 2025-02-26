@@ -1,5 +1,5 @@
 //
-//  Spark.Header.Tests.swift
+//  SparkTests.Header.swift
 //  Spark
 //
 //  Created by Dream on 2025/2/26.
@@ -65,6 +65,7 @@ extension SparkTests {
     func testHeader_UserAgent() -> Void {
         let header = Spark.Header.userAgent("User-Agent")
         XCTAssertEqual(header.name, "User-Agent")
+        XCTAssertEqual(header.description, "User-Agent : User-Agent")
     }
 
 }
