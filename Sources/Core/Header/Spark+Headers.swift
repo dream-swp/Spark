@@ -164,17 +164,35 @@ extension Spark.Headers: Equatable, Hashable, Sendable { }
 
 // MARK: - Spark.Headers: Collection
 extension Spark.Headers: Collection {
-    public var endIndex: Int {
-        headers.endIndex
-    }
     
+    /// first index
     public var startIndex: Int {
         headers.startIndex
     }
     
+    /// last index
+    public var endIndex: Int {
+        headers.endIndex
+    }
+    
+    /// Returns the position immediately after the given index.
+    ///
+    /// - Parameter i: A valid index of the collection. `i` must be less than
+    ///   `endIndex`.
+    /// - Returns: The index immediately after `i`.
     public func index(after i: Int) -> Int {
         headers.index(after: i)
     }
+    
+    /// Returns the position immediately before the given index.
+    ///
+    /// - Parameter i: A valid index of the collection. `i` must be greater than
+    ///   `startIndex`.
+    /// - Returns: The index immediately before `i`.
+    public func index(before i: Int) -> Int {
+        headers.index(before: i)
+    }
+    
     
     public subscript(position: Int) -> Spark.Header {
         headers[position]

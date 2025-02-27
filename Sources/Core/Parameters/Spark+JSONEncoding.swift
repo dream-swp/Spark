@@ -33,12 +33,22 @@ public extension Spark {
 // MARK: - Encoding
 extension Spark.JSONEncoding: Spark.ParameterEncoding {
     
-    
-    public func encode(_ urlRequest: URLRequest, with parameters: Spark.Parameters?) throws -> URLRequest {
+    /// URLRequest JSON encoding
+    /// - Parameters:
+    ///   - urlRequest: Coding `URLRequest`
+    ///   - parameters: Coding `Parameters`, `Spark.Parameters = [String: Any]`
+    /// - Returns: The encoding completed URLRequest
+    public func encode(_ urlRequest: URLRequest, with parameters: Spark.Parameters? = nil) throws -> URLRequest {
         return urlRequest
     }
     
-    public func encode(_ urlRequest: URLRequest,  with jsonObject: Any? = nil) throws -> URLRequest {
+    
+    /// URLRequest JSON encoding
+    /// - Parameters:
+    ///   - urlRequest: Coding `URLRequest`
+    ///   - jsonObject: Coding `Parameters`,  `jsonObject` = Any
+    /// - Returns: The encoding completed URLRequest
+    public func encode(_ urlRequest: URLRequest, with jsonObject: Any? = nil) throws -> URLRequest {
          
         guard let jsonObject = jsonObject else { return urlRequest }
         
@@ -46,7 +56,20 @@ extension Spark.JSONEncoding: Spark.ParameterEncoding {
             throw Spark.Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: Spark.Error.JSONEncodingError.invalidJSONObject))
         }
         
-        // TODO: - MARK: - 
+        var request = urlRequest
+        
+        do {
+            let data = try JSONSerialization.data(withJSONObject: jsonObject, options: options)
+            
+            if request.sp.headers[Spark.Header.Key.ContentType] == nil {
+                request.sp.headers.update(.contentType("application/json"))
+            }
+            request.httpBody = data
+            
+        } catch {
+            throw Spark.Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
+        }
+        
         return urlRequest
     }
     

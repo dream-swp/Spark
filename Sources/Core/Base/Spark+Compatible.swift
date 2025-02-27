@@ -11,29 +11,29 @@ import Foundation
 public protocol SparkCompatible { }
 
 /// Isolation
-public struct DS<DS> {
+public struct SP<SP> {
     
     /// Prefix property
-    public var spark: DS
+    public var sp: SP
     
     /// Initialization method
     /// - Parameter ds: DS
-    public init(_ spark : DS) {
-        self.spark = spark
+    public init(_ sp : SP) {
+        self.sp = sp
     }
 }
 
 public extension SparkCompatible {
     
     /// Instance property
-    var spark: DS<Self> {
+    var sp: SP<Self> {
         set { }
-        get { DS(self) }
+        get { SP(self) }
     }
     
     /// Static property
-    static var spark: DS<Self>.Type {
+    static var sp: SP<Self>.Type {
         set { }
-        get { DS<Self>.self }
+        get { SP<Self>.self }
     }
 }

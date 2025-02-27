@@ -9,9 +9,9 @@ import Foundation
 
 extension URLRequest: SparkCompatible { }
 
-public extension DS where DS == URLRequest {
+public extension SP where SP == URLRequest {
     var headers: Spark.Headers {
-        set { spark.allHTTPHeaderFields = newValue.dictionary }
-        get { spark.allHTTPHeaderFields.map(Spark.Headers.init) ?? Spark.Headers() }
+        set { sp.allHTTPHeaderFields = newValue.dictionary }
+        get { sp.allHTTPHeaderFields.map(Spark.Headers.init) ?? Spark.Headers() }
     }
 }
