@@ -16,6 +16,17 @@ public extension Spark {
         
         /// POST Request
         case post = "POST"
+        
+        public init(_ rawValue: String) {
+            switch rawValue {
+            case "GET" :
+                self = .get
+            case "POST":
+                self = .post
+            default:
+                self = .get
+            }
+        }
     }
 }
 

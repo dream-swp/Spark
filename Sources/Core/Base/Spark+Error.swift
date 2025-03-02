@@ -20,6 +20,9 @@ public extension Spark {
         
         /// Request Parameters Encoding Failed
         case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
+        
+        /// `URLConvertible` type failed to create a valid `URL`.
+        case invalidURL(url: any URLConvert)
     }
 }
 
@@ -36,7 +39,8 @@ extension Spark.Error: LocalizedError {
             return "Invalid response to the request."
         case .parameterEncodingFailed(let error):
             return error.localizedDescription
-
+        case let .invalidURL(url):
+            return "URL is not valid: \(url)"
         }
     }
 }
@@ -63,9 +67,9 @@ extension Spark.Error.ParameterEncodingFailureReason: LocalizedError {
         case .missingURL:
             return "URL request to encode was missing a URL"
         case let .jsonEncodingFailed(error):
-            return "JSON could not be encoded because of error:\n\(error.localizedDescription)"
+            return "JSON could not be encoded because of error: \n \(error.localizedDescription)"
         case let .customEncodingFailed(error):
-            return "Custom parameter encoder failed with error: \(error.localizedDescription)"
+            return "Custom parameter encoder failed with error: \n \(error.localizedDescription)"
         }
     }
 }

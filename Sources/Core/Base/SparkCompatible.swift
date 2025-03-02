@@ -1,5 +1,5 @@
 //
-//  Spark+Space.swift
+//  Spark+Protocol.swift
 //  Spark
 //
 //  Created by Dream on 2025/2/26.
@@ -11,29 +11,31 @@ import Foundation
 public protocol SparkCompatible { }
 
 /// Isolation
-public struct SP<SP> {
+public struct SK<SK> {
     
     /// Prefix property
-    public var sp: SP
+    public let sk: SK
     
     /// Initialization method
     /// - Parameter ds: DS
-    public init(_ sp : SP) {
-        self.sp = sp
+    public init(_ sp : SK) {
+        self.sk = sp
     }
 }
 
 public extension SparkCompatible {
     
     /// Instance property
-    var sp: SP<Self> {
+    var sk: SK<Self> {
         set { }
-        get { SP(self) }
+        get { SK(self) }
     }
     
     /// Static property
-    static var sp: SP<Self>.Type {
+    static var sk: SK<Self>.Type {
         set { }
-        get { SP<Self>.self }
+        get { SK<Self>.self }
     }
 }
+
+
