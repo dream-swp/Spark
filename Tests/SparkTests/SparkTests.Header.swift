@@ -8,7 +8,7 @@
 import XCTest
 @testable import Spark
 
-extension SparkTests {
+final class SparkTestsHeader: SparkTests {
     
     func testHeader_Accept() -> Void {
         let header = Spark.Header.accept("Accept")

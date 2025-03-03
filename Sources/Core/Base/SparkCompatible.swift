@@ -1,5 +1,5 @@
 //
-//  Spark+Protocol.swift
+//  SparkCompatible.swift
 //  Spark
 //
 //  Created by Dream on 2025/2/26.
@@ -37,5 +37,9 @@ public extension SparkCompatible {
         get { SK<Self>.self }
     }
 }
+
+extension String: SparkCompatible {}
+extension CharacterSet: SparkCompatible {}
+extension NSNumber: SparkCompatible {}
 
 

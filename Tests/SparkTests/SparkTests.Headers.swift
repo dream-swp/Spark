@@ -8,7 +8,7 @@
 import XCTest
 @testable import Spark
 
-extension SparkTests {
+final class SparkTestsHeaders: SparkTests {
     
     func testHeaders_add() -> Void {
         

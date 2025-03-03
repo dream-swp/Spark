@@ -8,7 +8,7 @@
 import XCTest
 @testable import Spark
 
-extension SparkTests {
+final class SparkTestsJSONEncoding: SparkTests {
     
     func testJSONEncoding_isValidJSONObject() -> Void {
         

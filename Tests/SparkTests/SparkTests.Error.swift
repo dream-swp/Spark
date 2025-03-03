@@ -8,9 +8,9 @@
 import XCTest
 @testable import Spark
 
-extension SparkTests {
+final class SparkTestsError: SparkTests {
     
-    func testError() -> Void {
+    func test_error() -> Void {
         let error1 = Spark.Error.urlError
         XCTAssertEqual(error1.localizedDescription, "Request URL Error")
         
