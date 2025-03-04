@@ -1,5 +1,5 @@
 //
-//  Spark+URLEncodeing.swift
+//  Spark+URLEncoding.swift
 //  Spark
 //
 //  Created by Dream on 2025/2/22.
@@ -11,34 +11,32 @@ import Foundation
 // MARK: - Spark.URLEncodeing
 public extension Spark {
     
-    struct URLEncodeing {
+    struct URLEncoding {
         
         /// Returns a default `URLEncoding` instance with a `.methodDependent` destination.
-        public static var `default`: URLEncodeing { URLEncodeing() }
+        public static var `default`: URLEncoding { URLEncoding() }
         
         /// Returns a `URLEncoding` instance with a `.queryString` destination.
-        public static var queryString: URLEncodeing { URLEncodeing(destination: .queryString) }
+        public static var queryString: URLEncoding { URLEncoding(destination: .queryString) }
         
         /// Returns a `URLEncoding` instance with an `.httpBody` destination.
-        public static var httpBody: URLEncodeing { URLEncodeing(destination: .httpBody) }
-        
+        public static var httpBody: URLEncoding { URLEncoding(destination: .httpBody) }
         
         /// The destination defining where the encoded query string is to be applied to the URL request.
-        public var destination: Spark.URLEncodeing.Destination
+        public var destination: Spark.URLEncoding.Destination
         
         /// The encoding to use for `Array` parameters.
-        public var arrayEncoding: Spark.URLEncodeing.ArrayEncoding
+        public var arrayEncoding: Spark.URLEncoding.ArrayEncoding
         
         /// The encoding to use for `Bool` parameters.
-        public var boolEncoding: Spark.URLEncodeing.BoolEncoding
-        
+        public var boolEncoding: Spark.URLEncoding.BoolEncoding
         
         /// `Spark.URLEncodeing` Initialization method
         /// - Parameters:
         ///   - destination:    The destination defining where the encoded query string is to be applied to the URL request.
         ///   - arrayEncoding:  The encoding to use for `Array` parameters.
         ///   - boolEncoding:   The encoding to use for `Bool` parameters.
-        public init(destination: Spark.URLEncodeing.Destination = .methodDependent, arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
+        public init(destination: Spark.URLEncoding.Destination = .methodDependent, arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
             self.destination    = destination
             self.arrayEncoding  = arrayEncoding
             self.boolEncoding   = boolEncoding
@@ -47,7 +45,7 @@ public extension Spark {
 }
 
 // MARK: - Spark.URLEncodeing: Destination
-public extension Spark.URLEncodeing {
+public extension Spark.URLEncoding {
     
     /// Defines whether the url-encoded query string is applied to the existing query string or HTTP body of the
     /// resulting URL request.
@@ -79,7 +77,7 @@ public extension Spark.URLEncodeing {
 }
 
 // MARK: - Spark.URLEncodeing: ArrayEncoding
-public extension Spark.URLEncodeing {
+public extension Spark.URLEncoding {
     
     /// Configures how `Array` parameters are encoded.
     enum ArrayEncoding: Sendable {
@@ -115,7 +113,7 @@ public extension Spark.URLEncodeing {
 }
 
 // MARK: - Spark.URLEncodeing: BoolEncoding
-public extension Spark.URLEncodeing {
+public extension Spark.URLEncoding {
     
     /// Configures how `Bool` parameters are encoded.
     enum BoolEncoding: Sendable {
@@ -142,28 +140,24 @@ public extension Spark.URLEncodeing {
     
 }
 
-extension Spark.URLEncodeing: Spark.ParameterEncoding {
+extension Spark.URLEncoding: Spark.ParameterEncoding {
     
     public func encode(_ urlRequest: URLRequest, with parameters: Spark.Parameters?) throws -> URLRequest {
         guard let parameters = parameters else { return urlRequest }
-        
+       
         var request = urlRequest
         
         if let method = request.method, destination.encodesParametersInURL(for: method) {
-            
             guard let url = request.url else { throw Spark.Error.parameterEncodingFailed(reason: .missingURL) }
-            
             if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), !parameters.isEmpty {
                 let percentEncodedQuery = (urlComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
                 urlComponents.percentEncodedQuery = percentEncodedQuery
                 request.url = urlComponents.url
             }
-            
         } else {
             if request.headers["Content-Type"] == nil {
                 request.headers.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
             }
-            
             request.httpBody = Data(query(parameters).utf8)
         }
         
@@ -172,7 +166,7 @@ extension Spark.URLEncodeing: Spark.ParameterEncoding {
 
 }
 
-extension Spark.URLEncodeing {
+extension Spark.URLEncoding {
     
     /// Create a group percent-escaped, URL encoded query string components from the given key-value pair recursively.
     /// - Parameter parameters: [String: Any]

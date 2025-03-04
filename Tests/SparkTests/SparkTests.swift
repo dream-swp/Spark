@@ -8,8 +8,8 @@ class SparkTests: XCTestCase {
     
 }
 
-
 extension SparkTests: SparkCompatible { }
+
 extension SK where SK: SparkTests {
     func urlRequest(url: String = "https://wwww.spark.test.com", method: Spark.Method = .get, headers: Spark.Headers? = nil) throws -> URLRequest {
         try URLRequest(url: url, method: method, headers: headers)
