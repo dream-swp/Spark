@@ -250,8 +250,6 @@ final class SparkTestsURLEncoding: SparkTests {
         XCTAssertEqual(urlRequest.url?.query, "key01=1&key02=0&key03=1&key04=0&key05=1&key06=0&key07=1&key08=0&key09=true&key10=false&key11=true&key12=false")
     }
     
-    // MARK: Tests - All Reserved / Unreserved / Illegal Characters According to RFC 3986
-    
     func  test_URLEncodeing_CharactersArePercentEscapedMinusQuestionMarkAndForwardSlash() throws {
         // Given
         let generalDelimiters = ":#[]@"
@@ -264,6 +262,85 @@ final class SparkTestsURLEncoding: SparkTests {
         // Then
         let expectedQuery = "key=%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D"
         XCTAssertEqual(urlRequest.url?.query, expectedQuery)
+    }
+    
+    func test_URLEncodeing_UnreservedNumericCharactersAreNotPercentEscaped() throws {
+        // Given
+        let parameters = ["key_number": "0123456789"]
+
+        // When
+        let urlRequest = try encoding.encode(sk.urlRequest(), with: parameters)
+
+        // Then
+        XCTAssertEqual(urlRequest.url?.query, "key_number=0123456789")
+    }
+
+    func test_URLEncodeing_UnreservedLowercaseCharactersAreNotPercentEscaped() throws {
+        // Given
+        let parameters = ["key_lowercase": "abcdefghijklmnopqrstuvwxyz"]
+
+        // When
+        let urlRequest = try encoding.encode(sk.urlRequest(), with: parameters)
+
+        // Then
+        XCTAssertEqual(urlRequest.url?.query, "key_lowercase=abcdefghijklmnopqrstuvwxyz")
+    }
+
+    func test_URLEncodeing_UnreservedUppercaseCharactersAreNotPercentEscaped() throws {
+        // Given
+        let parameters = ["key_uppercase": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+
+        // When
+        let urlRequest = try encoding.encode(sk.urlRequest(), with: parameters)
+
+        // Then
+        XCTAssertEqual(urlRequest.url?.query, "key_uppercase=ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    }
+    
+    func test_URLEncodeing_EncodesGETParametersInURL() throws {
+        // Given
+        var mutableURLRequest = try sk.urlRequest()
+        mutableURLRequest.httpMethod = Spark.Method.get.rawValue
+        let parameters = ["key1": 1, "key2": 2]
+
+        // When
+        let urlRequest = try encoding.encode(mutableURLRequest, with: parameters)
+
+        // Then
+        XCTAssertEqual(urlRequest.url?.query, "key1=1&key2=2")
+        XCTAssertNil(urlRequest.value(forHTTPHeaderField: "Content-Type"), "Content-Type should be nil")
+        XCTAssertNil(urlRequest.httpBody, "HTTPBody should be nil")
+    }
+    
+    func test_URLEncodeing_EncodesPOSTParametersInHTTPBody() throws {
+        // Given
+        var mutableURLRequest = try sk.urlRequest()
+        mutableURLRequest.httpMethod = Spark.Method.post.rawValue
+        let parameters = ["key1": 1, "key2": 2]
+
+        // When
+        let urlRequest = try encoding.encode(mutableURLRequest, with: parameters)
+
+        // Then
+        XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/x-www-form-urlencoded; charset=utf-8")
+        XCTAssertNotNil(urlRequest.httpBody, "HTTPBody should not be nil")
+
+        XCTAssertEqual(urlRequest.httpBody?.sk.string, "key1=1&key2=2")
+    }
+    
+    func test_URLEncodeing_InURLParameterEncodingEncodesPOSTParametersInURL() throws {
+        // Given
+        var mutableURLRequest = try sk.urlRequest()
+        mutableURLRequest.httpMethod = Spark.Method.post.rawValue
+        let parameters = ["key1": 1, "key2": 2]
+
+        // When
+        let urlRequest = try Spark.URLEncoding.queryString.encode(mutableURLRequest, with: parameters)
+
+        // Then
+        XCTAssertEqual(urlRequest.url?.query, "key1=1&key2=2")
+        XCTAssertNil(urlRequest.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertNil(urlRequest.httpBody, "HTTPBody should be nil")
     }
 
 }

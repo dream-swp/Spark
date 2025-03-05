@@ -10,90 +10,147 @@ import XCTest
 
 final class SparkTestsJSONEncoding: SparkTests {
     
-    func testJSONEncoding_isValidJSONObject() -> Void {
+    private let encoding = Spark.JSONEncoding.default
+    
+    func test_JSONEncoding_EncodeNilParameters() throws {
         
-       let encoding = Spark.JSONEncoding.default
+        // Given, When
+        let request = try encoding.encode(sk.urlRequest(), with: nil)
+
+        // Then
+        XCTAssertNil(request.url?.query, "query should be nil")
+        XCTAssertNil(request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertNil(request.httpBody, "HTTPBody should be nil")
         
-        let jsonObject1 = ["Accept": "Accept", "AcceptCharset": "AcceptCharset", "UserAgent": "UserAgent"]
-        XCTAssertNoThrow(try encoding.isValidJSONObject(jsonObject1))
-        
-        let jsonObject2 = [1: "a"]
-        XCTAssertThrowsError(try encoding.isValidJSONObject(jsonObject2)) { error in
-            let error1 = error as? Spark.Error
-            let error2: Spark.Error? = Spark.Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: Spark.Error.JSONEncodingError.invalidJSONObject))
-            XCTAssertEqual(error1?.localizedDescription, error2?.localizedDescription)
-        }
     }
     
-    
-    func testJSONEncoding_jsonData() -> Void {
-       let encoding = Spark.JSONEncoding.prettyPrinted
+    func test_JSONEncoding_EncodeComplexParameters() throws {
         
-        let jsonObject1 = ["Accept": "Accept", "AcceptCharset": "AcceptCharset", "UserAgent": "UserAgent"]
-        XCTAssertNoThrow(try encoding.jsonData(jsonObject1))
+        // Given
+        let parameters: [String: Any] = ["accept": "string",
+                                         "array" : ["a", 1, true],
+                                         "dictionary" : ["a": 1, "b": [2, 2], "c": [3, 3, 3]]]
 
-        let expectedData = try? JSONSerialization.data(withJSONObject: jsonObject1, options: encoding.options)
-        let resultData   = try? encoding.jsonData(jsonObject1, options: encoding.options)
+        // When
+        let request = try encoding.encode(sk.urlRequest(), with: parameters)
+
+        // Then
+        XCTAssertNil(request.url?.query)
+        XCTAssertNotNil(request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+        XCTAssertNotNil(request.httpBody)
+
+        XCTAssertEqual(try request.httpBody?.sk.JSONObject() as? NSObject, parameters as NSObject, "Decoded request body and parameters should be equal.")
+    }
+    
+    func test_JSONEncoding_EncodeArray() throws {
+        // Given
+        let array = ["value1", "value2", "value3"]
+
+        // When
+        let request = try encoding.encode(sk.urlRequest(), jsonObject: array)
+
+        // Then
+        XCTAssertNil(request.url?.query)
+        XCTAssertNotNil(request.value(forHTTPHeaderField: "Content-Type"))
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+        XCTAssertNotNil(request.httpBody)
+        XCTAssertEqual(try request.httpBody?.sk.JSONObject() as? NSObject, array as NSObject, "Decoded request body and parameters should be equal.")
+    }
+    
+    func test_JSONEncoding_ParametersRetainsCustomContentType() throws {
+        // Given
+        let request = try URLRequest(url: "https://wwww.spark.test.com", method: .get, headers: [.contentType("application/custom-json-type+json")])
+        let parameters = ["key": "value"]
+
+        // When
+        let urlRequest = try encoding.encode(request, with: parameters)
+
+        // Then
+        XCTAssertNil(urlRequest.url?.query)
+        XCTAssertEqual(urlRequest.headers["Content-Type"], "application/custom-json-type+json")
+    }
+    
+    func test_JSONEncoding_isValidJSONObjectNoThrow() -> Void {
+        
+        // Given, When
+        let parameters = ["Accept": "Accept", "AcceptCharset": "AcceptCharset", "UserAgent": "UserAgent"]
+        
+        // Then
+        XCTAssertNoThrow(try encoding.isValidJSONObject(parameters))
+    }
+    
+    func test_JSONEncoding_isValidJSONObjectThrowsError() -> Void {
+        
+        // Given, When
+        let parameters = [1: "a"]
+        
+        // Then
+        XCTAssertThrowsError(try encoding.isValidJSONObject(parameters))
+    }
+
+    
+    func test_JSONEncoding_jsonDataNoThrow() -> Void {
+        
+        // Given, When
+        let parameters = ["Accept": "Accept", "AcceptCharset": "AcceptCharset", "UserAgent": "UserAgent"]
+        
+        // Then
+        XCTAssertNoThrow(try encoding.jsonData(parameters))
+    }
+    
+    func test_JSONEncoding_jsonDataEqual() -> Void {
+        
+        // Given
+        let parameters = ["Accept": "Accept", "AcceptCharset": "AcceptCharset", "UserAgent": "UserAgent"]
+        
+        // When
+        let expectedData = try? JSONSerialization.data(withJSONObject: parameters, options: encoding.options)
+        let resultData   = try? encoding.jsonData(parameters, options: encoding.options)
+        
+        // Then
         XCTAssertEqual(resultData, expectedData)
     }
     
-    func testJSONEncoding_requestConfig() throws -> Void {
-       let encoding = Spark.JSONEncoding.default
-        let jsonObject = ["Accept": "Accept", "AcceptCharset": "AcceptCharset", "UserAgent": "UserAgent"]
+    func test_JSONEncoding_requestConfig_DictionaryParameters() throws -> Void {
         
-        if var request = try? URLRequest(url: "https://wwww.aaaaccc.com", method: .get, headers: nil), let jsonData = try? encoding.jsonData(jsonObject) {
-            request = encoding.requestConfig(request, jsonData: jsonData)
-            let expected = ["Content-Type": "application/json"]
-            XCTAssertEqual(request.headers.dictionary, expected)
-        }
-        
-        let headers = Spark.Headers(headers: [.accept("accept"), .contentType("application/json"), .authorization(bearerToken: "bearerToken")])
-        
-        let request = try URLRequest(url: "https://wwww.aaaaccc.com", method: .get, headers: headers)
-        let jsonData = try encoding.jsonData(jsonObject)
-        
-        let result = encoding.requestConfig(request, jsonData: jsonData)
-        XCTAssertEqual(result.headers.dictionary, headers.dictionary)
-    
-       
-    }
-    
-    func testJSONEncoding_encodeJsonObject() throws -> Void {
-        let encoding = Spark.JSONEncoding.prettyPrinted
         
         // Given
-        let parameters: [String: Any] = ["accept"       : "string",
-                                         "array"        : ["a", 1, true],
-                                         "dictionary"   : ["a": 1, "b": [2, 2], "c": [3, 3, 3]]]
-
-        
-        let request = try self.sk.urlRequest()
+        let parameters = ["Accept": "Accept", "AcceptCharset": "AcceptCharset", "UserAgent": "UserAgent"]
+        let jsonData = try encoding.jsonData(parameters)
         
         // When
-        let result  = try encoding.encode(request, jsonObject: parameters)
-    
+        let request = try encoding.requestConfig(sk.urlRequest(), jsonData: jsonData)
+        
         // Then
-        XCTAssertNil(result.url?.query)
-        XCTAssertNotNil(result.value(forHTTPHeaderField: "Content-Type"))
-        XCTAssertEqual(result.value(forHTTPHeaderField: "Content-Type"), "application/json")
-        XCTAssertNotNil(result.httpBody)
-        XCTAssertEqual(try result.httpBody?.sk.JSONObject() as? NSObject, parameters as NSObject, "Decoded request body and parameters should be equal.")
+        let expected = ["Content-Type": "application/json"]
+        XCTAssertEqual(request.headers.dictionary, expected)
         
-        
-    
     }
     
-    func testJSONEncoding_encode() throws -> Void {
+    func test_JSONEncoding_requestConfig_HeadersParameters() throws -> Void {
         
+        // Given
+        let parameters = Spark.Headers(headers: [.accept("accept"), .contentType("application/json"), .authorization(bearerToken: "bearerToken")])
+        let jsonData = try encoding.jsonData(parameters.dictionary)
+        
+        // When
+        let result = try encoding.requestConfig(sk.urlRequest(method: .get, headers: parameters), jsonData: jsonData)
+        
+        // Then
+        XCTAssertEqual(result.headers.dictionary, parameters.dictionary)
+    }
+
+    func test_JSONEncoding_encode() throws -> Void {
+        
+        // Given
         let encoding = Spark.JSONEncoding.prettyPrinted
-        
         let parameters: Spark.Parameters = ["accept"     : "string",
                                             "array"      : ["a", "b", "c"],
                                             "dictionary" : ["a": "1",  "b": "2", "c": "3"]]
-        let request = try self.sk.urlRequest()
         
         // When
-        let result  = try encoding.encode(request, with: parameters)
+        let result  = try encoding.encode(sk.urlRequest(), with: parameters)
     
         // Then
         XCTAssertNil(result.url?.query)
