@@ -26,8 +26,38 @@ public extension Spark {
     }
 }
 
+// MARK: - Spark.Error: Public
+public extension Spark.Error {
+    
+    /// Returns whether the instance is `.urlError`.
+    var isURLError: Bool {
+        if case .urlError = self { return true }
+        return false
+    }
+    
+    /// Returns whether the instance is `.invalidResponse`.
+    var isInvalidResponse: Bool {
+        if case .invalidResponse = self { return true }
+        return false
+    }
+    
+    /// Returns whether the instance is `.parameterEncodingFailed`. When `true`, the `underlyingError` property will
+    /// contain the associated value.
+    var isParameterEncodingError: Bool {
+        if case .parameterEncodingFailed = self { return true }
+        return false
+    }
+    
+    /// Returns whether the instance is `.invalidURL`.
+    var isInvalidURLError: Bool {
+        if case .invalidURL = self { return true }
+        return false
+    }
+}
+
 // MARK: - Spark.Error: Sendable
 extension Spark.Error: Sendable { }
+
 
 // MARK: - Spark.Error: LocalizedError
 extension Spark.Error: LocalizedError {

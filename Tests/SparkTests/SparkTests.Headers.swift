@@ -10,8 +10,7 @@ import XCTest
 
 final class SparkTestsHeaders: SparkTests {
     
-    
-    func test_Header_subscript_name() -> Void {
+    func test_Header_subscript_name1() -> Void {
         
         // Given
         var headers = Spark.Headers()
@@ -23,7 +22,19 @@ final class SparkTestsHeaders: SparkTests {
         headers["Accept"].map { XCTAssertTrue($0.isEmpty) }
     }
     
-    func test_Header_subscript_key() -> Void {
+    func test_Header_subscript_name2() -> Void {
+        
+        // Given
+        var headers = Spark.Headers()
+        
+        // When
+        headers["Accept"] = "Accept"
+        
+        // Then
+        XCTAssertEqual(headers["Accept"], "Accept")
+    }
+    
+    func test_Header_subscript_key1() -> Void {
         
         // Given
         var headers = Spark.Headers()
@@ -33,6 +44,19 @@ final class SparkTestsHeaders: SparkTests {
         
         // Then
         headers[.Accept].map { XCTAssertTrue($0.isEmpty) }
+    }
+    
+    
+    func test_Header_subscript_key2() -> Void {
+        
+        // Given
+        var headers = Spark.Headers()
+        
+        // When
+        headers[.Accept] = "Accept"
+        
+        // Then
+        XCTAssertEqual(headers[.Accept], "Accept")
     }
     
     func test_Headers_add_name() -> Void {
@@ -159,46 +183,55 @@ final class SparkTestsHeaders: SparkTests {
     }
     
     
+    func test_Headers_Index() -> Void {
+        
+        // Given
+        let dictionary = ["Basic" : "Basic", "Accept" : "Accept", "User-Agent" : "User-Agent", "ContentType" : "ContentType"]
+        let headers = Spark.Headers(dictionary).sorted()
+        
+        // When
+        let index = headers.index(after: headers.startIndex)
+        
+        // Then
+        XCTAssertEqual(headers[index].name, "Basic")
+    }
     
-//
-//    func testHeaders_dictionary() -> Void {
-//        let dictionary = ["Accept" : "Accept", "Basic" : "Basic", "ContentType" : "ContentType"]
-//        let headers = Spark.Headers(dictionary)
-//        let converts = headers.dictionary
-//        XCTAssertTrue(dictionary == converts)
-//        
-//        let sorted =  headers.sorted()
-//        
-//        // first index
-//        let firstIndex = sorted.startIndex
-//        XCTAssertEqual(sorted[firstIndex].name, "Accept")
-//        
-//        let index2 = sorted.index(after: sorted.startIndex)
-//        XCTAssertEqual(sorted[index2].name, "Basic")
-//        
-//        let lastIndex = sorted.index(before: sorted.endIndex)
-//        XCTAssertEqual(sorted[lastIndex].name, "ContentType")
-//        
-//        let headers1 = Spark.Headers(arrayLiteral: Spark.Header(key: .Accept, value: ""), Spark.Header(name: "Basic", value: "Basic"))
-//        XCTAssertTrue(!headers1.isEmpty)
-//        
-//        let headers2 = Spark.Headers(dictionaryLiteral: ("Basic", "Basic"), (Spark.Header.Key.Accept.rawValue, "Accept"))
-//        XCTAssertTrue(!headers2.isEmpty)
-//    }
-//    
-//    func testHeaders_makeIterator() -> Void {
-//        
-//        let dictionary = ["Accept" : "Accept", "Basic" : "Basic", "ContentType" : "ContentType"]
-//        let headers = Spark.Headers(dictionary)
-//        var iterator = headers.makeIterator()
-//        
-//        var iteratorData = [String : String] ()
-//        while let header = iterator.next() {
-//            iteratorData[header.name] = header.value
-//        }
-//        XCTAssertTrue(headers.dictionary == iteratorData && iteratorData == dictionary)
-//    }
+    
+    func test_Headers_arrayLiteral() -> Void {
+        
+        // Given, When
+        let headers = Spark.Headers(arrayLiteral: Spark.Header(key: .Accept, value: ""), Spark.Header(name: "Basic", value: "Basic"))
+        
+        // Then
+        XCTAssertFalse(headers.isEmpty)
+    }
+    
+    func test_Headers_dictionaryLiteral() -> Void {
+        
+        // Given, When
+        let headers = Spark.Headers(dictionaryLiteral: ("Basic", "Basic"), (Spark.Header.Key.Accept.rawValue, "Accept"))
+        
+        // Then
+        XCTAssertFalse(headers.isEmpty)
+        
+    }
+    
+    func test_Headers_makeIterator() -> Void {
+        
+        // Given
+        let dictionary = ["Accept" : "Accept", "Basic" : "Basic", "ContentType" : "ContentType"]
+        let headers = Spark.Headers(dictionary)
+        
+        // When
+        var iterator = headers.makeIterator()
+        var iteratorData: [String : String] = [:]
+        while let header = iterator.next() {
+            iteratorData[header.name] = header.value
+        }
+        
+        // Then
+        XCTAssertTrue(headers.dictionary == iteratorData && iteratorData == dictionary)
+    }
     
 }
-
 

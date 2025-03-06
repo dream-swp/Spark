@@ -10,4 +10,70 @@ import XCTest
 
 final class SparkTestsURLRequest: SparkTests {
     
+    private let url = "https://wwww.spark.test.com"
+    
+    private func url(_ url: String) throws -> Spark.URLConvert {
+        try URL(string: url)!.skURL()
+    }
+    
+    
+    private func urlComponents(_ url: String) throws -> Spark.URLConvert {
+        try URLComponents(string: url)!.skURL()
+    }
+    
+    func test_error_URLRequest_get1() throws {
+        
+        // Given, When
+        let urlRequest =  try URLRequest(url: url, method: .get, headers: [.accept("accept"),  .userAgent("userAgent")])
+        
+        // Then
+        XCTAssertEqual(urlRequest.httpMethod, Spark.Method.get.rawValue)
+    }
+    
+    
+    func test_error_URLRequest_get2() throws {
+        
+        // Given
+        var urlRequest =  try URLRequest(url: url, method: .post ,headers: nil)
+        
+        // When
+        urlRequest.method = .get
+        urlRequest.headers = [.accept("accept")]
+        
+        // Then
+        XCTAssertEqual(urlRequest.method?.rawValue, urlRequest.httpMethod)
+    }
+    
+    
+    func test_error_URLRequest_post1() throws {
+        
+        // Given, When
+        let header: Spark.Headers = [.accept("accept"), .userAgent("userAgent")]
+        let urlRequest = try URLRequest(url: url(url), method: .post, headers: header)
+        
+        // Then
+        XCTAssertEqual(urlRequest.httpMethod, Spark.Method.post.rawValue)
+        XCTAssertEqual(urlRequest.allHTTPHeaderFields, header.dictionary)
+    }
+    
+    
+    func test_error_URLRequest_post2() throws {
+        
+        // Given, When
+        let urlRequest = try URLRequest(url: url(url), method: .post)
+        
+        // Then
+        XCTAssertNotNil(urlRequest.allHTTPHeaderFields)
+    }
+    
+    
+    func test_error_URLRequest_urlComponents() throws {
+        
+        // Given, When
+        let urlRequest = try URLRequest(url: urlComponents(url), method: .post)
+        
+        // Then
+        XCTAssertNotNil(urlRequest.allHTTPHeaderFields)
+    }
+    
 }

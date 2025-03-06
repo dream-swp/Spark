@@ -37,7 +37,7 @@ extension Spark.JSONEncoding: Spark.ParameterEncoding {
     ///   - urlRequest: Coding `URLRequest`
     ///   - parameters: Coding `Parameters`, `Spark.Parameters = [String: Any]`
     /// - Returns: The encoding completed URLRequest
-    public func encode(_ urlRequest: URLRequest, with parameters: Spark.Parameters? = nil) throws -> URLRequest {
+    public func encode(_ urlRequest: any Spark.URLRequestConvert, with parameters: Spark.Parameters? = nil) throws -> URLRequest {
         return try encode(urlRequest, jsonObject: parameters)
     }
     
@@ -47,8 +47,10 @@ extension Spark.JSONEncoding: Spark.ParameterEncoding {
     ///   - urlRequest: Coding `URLRequest`
     ///   - jsonObject: Coding `jsonObject` = Any
     /// - Returns: The encoding completed URLRequest
-    public func encode(_ urlRequest: URLRequest, jsonObject: Any? = nil) throws -> URLRequest {
+    public func encode(_ urlRequest: any Spark.URLRequestConvert, jsonObject: Any? = nil) throws -> URLRequest {
          
+        let urlRequest = try urlRequest.skURLRequest()
+        
         guard let jsonObject = jsonObject else { return urlRequest }
         
         try isValidJSONObject(jsonObject)

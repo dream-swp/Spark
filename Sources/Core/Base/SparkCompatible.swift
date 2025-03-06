@@ -7,9 +7,12 @@
 
 import Foundation
 
+// MARK: - SparkCompatible
 /// SparkCompatible, Isolation Agreement
 public protocol SparkCompatible { }
 
+
+// MARK: - SK
 /// Isolation
 public struct SK<SK> {
     
@@ -23,6 +26,7 @@ public struct SK<SK> {
     }
 }
 
+// MARK: - SparkCompatible Extension
 public extension SparkCompatible {
     
     /// Instance property
@@ -38,8 +42,15 @@ public extension SparkCompatible {
     }
 }
 
+// MARK: - String: SparkCompatible
 extension String: SparkCompatible {}
+
+// MARK: - CharacterSet: SparkCompatible
 extension CharacterSet: SparkCompatible {}
+
+// MARK: - NSNumber: SparkCompatible
 extension NSNumber: SparkCompatible {}
+// MARK: -
+
 
 

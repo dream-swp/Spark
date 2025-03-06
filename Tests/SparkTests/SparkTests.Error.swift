@@ -10,29 +10,78 @@ import XCTest
 
 final class SparkTestsError: SparkTests {
     
-    func test_error() -> Void {
-        let error1 = Spark.Error.urlError
-        XCTAssertEqual(error1.localizedDescription, "Request URL Error")
+    
+    func test_error_urlError() {
         
-        let error2 = Spark.Error.invalidResponse
-        XCTAssertEqual(error2.localizedDescription, "Invalid response to the request.")
+        // Given, When
+        let error = Spark.Error.urlError
         
-        let error3 = Spark.Error.parameterEncodingFailed(reason: .missingURL)
-        XCTAssertEqual(error3.localizedDescription, "URL request to encode was missing a URL")
-        
-        let error4 = Spark.Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error1))
-        XCTAssertTrue(error4.localizedDescription.contains("JSON could not be encoded because of error: \n "))
-        
-        let error5 = Spark.Error.parameterEncodingFailed(reason: .customEncodingFailed(error: error2))
-        XCTAssertTrue(error5.localizedDescription.contains("Custom parameter encoder failed with error: \n "))
-        
-        let errorString = """
-       Invalid JSON object provided for parameter or object encoding. \
-       This is most likely due to a value which can't be represented in Objective-C.
-       """
-        let error6 = Spark.Error.JSONEncodingError.invalidJSONObject
-        XCTAssertEqual(error6.localizedDescription, errorString)
-        
+        // Then
+        XCTAssertEqual(error.localizedDescription, "Request URL Error")
     }
     
+    func test_error_invalidResponse() {
+        
+        // Given, When
+        let error = Spark.Error.invalidResponse
+        
+        // Then
+        XCTAssertEqual(error.localizedDescription, "Invalid response to the request.")
+    }
+    
+    func test_error_invalidURL() {
+        
+        // Given, When
+        let error = Spark.Error.invalidURL(url: "WERTYUIOPASDFGHJKLZXCVBNM")
+        
+        // Then
+        XCTAssertEqual(error.localizedDescription, "URL is not valid: WERTYUIOPASDFGHJKLZXCVBNM")
+    }
+    
+    
+    
+    func test_error_parameterEncodingFailed_missingURL() {
+        
+        // Given, When
+        let error = Spark.Error.parameterEncodingFailed(reason: .missingURL)
+        
+        // Then
+        XCTAssertEqual(error.localizedDescription, "URL request to encode was missing a URL")
+    }
+    
+    
+    func test_error_parameterEncodingFailed_jsonEncodingFailed() {
+        
+        // Given, When
+        let error = Spark.Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: Spark.Error.ParameterEncodingFailureReason.missingURL))
+        
+        // Then
+        XCTAssertTrue(error.localizedDescription.contains("JSON could not be encoded because of error: \n "))
+    }
+    
+    func test_error_parameterEncodingFailed_customEncodingFailed() {
+        
+        // Given, When
+        let error = Spark.Error.parameterEncodingFailed(reason: .customEncodingFailed(error: Spark.Error.invalidResponse))
+        
+        // Then
+        XCTAssertTrue(error.localizedDescription.contains("Custom parameter encoder failed with error: \n "))
+    }
+    
+    
+    func test_error_JSONEncodingError_invalidJSONObject() {
+        
+        // Given
+        let errorString = """
+               Invalid JSON object provided for parameter or object encoding. \
+               This is most likely due to a value which can't be represented in Objective-C.
+               """
+        // When
+        let error = Spark.Error.JSONEncodingError.invalidJSONObject
+        
+        // Then
+        XCTAssertEqual(error.localizedDescription, errorString)
+    }
+
 }
+

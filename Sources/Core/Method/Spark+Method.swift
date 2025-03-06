@@ -11,12 +11,15 @@ public extension Spark {
     /// Request Method
     enum Method: (String) {
         
-        /// GET Request
+        /// `GET` method.
         case get = "GET"
         
-        /// POST Request
+        /// `POST` method.
         case post = "POST"
         
+        
+        /// `Spark.Header` Initialization method
+        /// - Parameter rawValue: Method String
         public init(_ rawValue: String) {
             switch rawValue {
             case "GET" :

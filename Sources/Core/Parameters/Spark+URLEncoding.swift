@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 // MARK: - Spark.URLEncodeing
 public extension Spark {
     
@@ -141,37 +140,51 @@ public extension Spark.URLEncoding {
 }
 
 extension Spark.URLEncoding: Spark.ParameterEncoding {
-    
-    public func encode(_ urlRequest: URLRequest, with parameters: Spark.Parameters?) throws -> URLRequest {
-        guard let parameters = parameters else { return urlRequest }
-       
-        var request = urlRequest
+  
+
+    /// Encodes any URLEncoding compatible object into a `URLRequest`.
+    ///
+    /// - Parameters:
+    ///   - urlRequest: `URLRequestConvert` value into which the object will be encoded.
+    ///   - parameters: `Any` value (must be JSON compatible) to be encoded into the `URLRequest`. `nil` by default.
+    ///
+    /// - Returns:      The encoded `URLRequest`.
+    /// - Throws:       Any `Error` produced during encoding.
+    public func encode(_ urlRequest: any Spark.URLRequestConvert, with parameters: Spark.Parameters?) throws -> URLRequest {
         
-        if let method = request.method, destination.encodesParametersInURL(for: method) {
-            guard let url = request.url else { throw Spark.Error.parameterEncodingFailed(reason: .missingURL) }
+        var urlRequest = try urlRequest.skURLRequest()
+        
+        guard let parameters = parameters else { return urlRequest }
+        
+        if let method = urlRequest.method, destination.encodesParametersInURL(for: method) {
+            
+            guard let url = urlRequest.url else { throw Spark.Error.parameterEncodingFailed(reason: .missingURL) }
+            
             if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), !parameters.isEmpty {
                 let percentEncodedQuery = (urlComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
                 urlComponents.percentEncodedQuery = percentEncodedQuery
-                request.url = urlComponents.url
+                urlRequest.url = urlComponents.url
             }
+            
         } else {
-            if request.headers["Content-Type"] == nil {
-                request.headers.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
+            if urlRequest.headers["Content-Type"] == nil {
+                urlRequest.headers.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
             }
-            request.httpBody = Data(query(parameters).utf8)
+            urlRequest.httpBody = Data(query(parameters).utf8)
         }
         
-        return request
+        return urlRequest
     }
 
 }
 
-extension Spark.URLEncoding {
+// MARK: - Spark.URLEncodeing: Private
+private extension Spark.URLEncoding {
     
     /// Create a group percent-escaped, URL encoded query string components from the given key-value pair recursively.
     /// - Parameter parameters: [String: Any]
     /// - Returns:
-    private func query(_ parameters: [String: Any]) -> String {
+     func query(_ parameters: [String: Any]) -> String {
         var components: [(String, String)] = []
         
         for key in parameters.keys.sorted(by: <) {
@@ -189,7 +202,7 @@ extension Spark.URLEncoding {
     ///   - value: Value of the query component.
     ///
     /// - Returns: The percent-escaped, URL encoded query string components.
-    public func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
+    func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
         var components: [(String, String)] = []
         switch value {
         case let dictionary as [String: Any]:
@@ -213,9 +226,11 @@ extension Spark.URLEncoding {
         }
         return components
     }
+    
 }
 
-fileprivate extension SK where SK == NSNumber {
+// MARK: - Public Util
+public extension SK where SK == NSNumber {
     
     var isBool: Bool {
         // Use Obj-C type encoding to check whether the underlying type is a `Bool`, as it's guaranteed as part of
@@ -226,11 +241,17 @@ fileprivate extension SK where SK == NSNumber {
 
 public extension SK where SK == String {
     
+    
+    /// Creates a percent-escaped string following RFC 3986 for a query string key or value.
+    ///
+    /// - Parameter string: `String` to be percent-escaped.
+    ///
+    /// - Returns:          The percent-escaped `String`.
     var escape: String {
         sk.addingPercentEncoding(withAllowedCharacters: .sk.urlQueryAllowed) ?? sk
     }
-    
 }
+
 
 public extension SK where SK == CharacterSet {
     
@@ -254,6 +275,5 @@ public extension SK where SK == CharacterSet {
 }
 
 // MARK: -
-
 
 
