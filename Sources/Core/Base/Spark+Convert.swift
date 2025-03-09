@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 // MARK: - URLConvert
 extension Spark  {
     
@@ -32,22 +31,75 @@ extension Spark  {
     }
     
     /// Request Convert
-    struct RequestConvert: URLRequestConvert  {
-        let url: any Spark.URLConvert
-        let method: Spark.Method
-        let parameters: Spark.Parameters?
-        let encoding: any Spark.ParameterEncoding
-        let headers: Spark.Headers?
-        let requestModifier: Spark.RequestModifier?
+    class RequestConvert: @unchecked Sendable, URLRequestConvert {
+     
+        var url: any Spark.URLConvert
+        var method: Spark.Method = .get
+        var encoding: any Spark.ParameterEncoding = Spark.URLEncoding.default
+        var parameters: Spark.Parameters?
+        var headers: Spark.Headers?
+        var requestModifier: Spark.RequestModifier?
         
-        public func skURLRequest() throws -> URLRequest {
+        var urlRequest: URLRequest? {
+            guard let urlRequest = try? skURLRequest() else { return nil }
+            return urlRequest
+        }
+        
+        func skURLRequest() throws -> URLRequest {
             var request = try URLRequest(url: url, method: method, headers: headers)
             try requestModifier?(&request)
             return try encoding.encode(request, with: parameters)
         }
+    
+        init(url: any Spark.URLConvert, method: Spark.Method = .get, encoding: any Spark.ParameterEncoding = Spark.URLEncoding.default, parameters: Spark.Parameters? = nil, headers: Spark.Headers? = nil, requestModifier: Spark.RequestModifier? = nil) {
+            self.url = url
+            self.method = method
+            self.encoding = encoding
+            self.parameters = parameters
+            self.headers = headers
+            self.requestModifier = requestModifier
+        }
+
+        
     }
     
 }
+
+extension Spark.RequestConvert {
+    
+    func url(_ url: Spark.URLConvert) -> Self {
+        self.url = url
+        return self
+    }
+    
+    func method(_ method: Spark.Method) -> Self {
+        self.method = method
+        return self
+    }
+    
+    func parameters(_ parameters: Spark.Parameters?) -> Self {
+        self.parameters = parameters
+        return self
+    }
+    
+    func encoding(_ encoding: Spark.ParameterEncoding) -> Self {
+        self.encoding = encoding
+        return self
+    }
+    
+     
+    func headers(_ headers: Spark.Headers?) -> Self {
+        self.headers = headers
+        return self
+    }
+    
+    func requestModifier(_ requestModifier: Spark.RequestModifier?) -> Self {
+        self.requestModifier = requestModifier
+        return self
+    }
+    
+}
+
 // MARK: - String: Spark.URLConvert Extension
 extension String: Spark.URLConvert {
     
@@ -119,7 +171,6 @@ public extension URLRequest {
         get { httpMethod.map(Spark.Method.init)  }
     }
 
-    
     /// Returns the `Headers` as `Spark.Headers`
     var headers: Spark.Headers {
         set { allHTTPHeaderFields = newValue.dictionary }
@@ -128,14 +179,4 @@ public extension URLRequest {
     
 }
 
-//extension Spark.RequestConvert: Spark.URLRequestConvert {
-//    
-//    
-//}
-
-
 // MARK: -
-
-
-
-

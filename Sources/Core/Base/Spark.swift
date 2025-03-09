@@ -20,20 +20,28 @@ public struct Spark : @unchecked Sendable {
 
 }
 
-
 public extension Spark {
     
     func request(url: any URLConvert,
-                 method: Spark.Method,
+                 method: Spark.Method = .get,
+                 encoding: Spark.ParameterEncoding = URLEncoding.default,
                  parameters: Spark.Parameters? = nil,
-                 encoding: Spark.ParameterEncoding = JSONEncoding.default,
                  headers: Spark.Headers? = nil,
                  requestModifier: Spark.RequestModifier? = nil) -> AnyPublisher<Data, Swift.Error> {
         
-        guard let request = try? convert(url, method: method, parameters: parameters, encoding: encoding, requestModifier: requestModifier).skURLRequest() else {
+
+        let convert: RequestConvert =
+            .init(url: url)
+            .method(method)
+            .encoding(encoding)
+            .parameters(parameters)
+            .headers(headers)
+            .requestModifier(requestModifier)
+    
+        guard let request = convert.urlRequest else {
             return Fail(error: Spark.Error.urlError).eraseToAnyPublisher()
         }
-        
+
         return URLSession
             .shared
             .dataTaskPublisher(for: request)
@@ -48,6 +56,33 @@ public extension Spark {
             }
             .eraseToAnyPublisher()
     }
+    
+//    func request(_ request: Spark.Request,
+//                 requestModifier: Spark.RequestModifier? = nil) -> AnyPublisher<Data, Swift.Error> {
+//        
+////        request.requestModifier = requestModifier;
+//        guard let urlRequest = try? request.skURLRequest() else {
+//            return Fail(error: Spark.Error.urlError).eraseToAnyPublisher()
+//
+//        }
+//        
+//        
+//        return URLSession
+//            .shared
+//            .dataTaskPublisher(for: urlRequest)
+//            .tryMap { data, response in
+//                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+//                    if let log = String(data: data, encoding: .utf8) {
+//                        debugPrint(log)
+//                    }
+//                    throw Spark.Error.invalidResponse
+//                }
+//                return data
+//            }
+//            .eraseToAnyPublisher()
+////        let convert = convert(urlRequest, method: request.method, parameters: request.parameters, encoding: request.encoding, requestModifier: requestModifier)
+//        
+//    }
 }
 
 extension Spark {
@@ -60,13 +95,10 @@ extension Spark {
                      requestModifier: Spark.RequestModifier?) -> RequestConvert {
         
         return Spark.RequestConvert(url: url,
-                                         method: method,
-                                         parameters: parameters,
-                                         encoding: encoding,
-                                         headers: headers,
-                                         requestModifier: requestModifier)
+                                    method: method,
+                                    encoding: encoding,
+                                    parameters: parameters,
+                                    headers: headers,
+                                    requestModifier: requestModifier)
     }
 }
-
-
-

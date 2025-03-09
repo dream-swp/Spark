@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 // MARK: - SparkCompatible
 /// SparkCompatible, Isolation Agreement
@@ -50,6 +51,9 @@ extension CharacterSet: SparkCompatible {}
 
 // MARK: - NSNumber: SparkCompatible
 extension NSNumber: SparkCompatible {}
+
+// MARK: - AnyCancellable: SparkCompatible
+extension AnyCancellable: SparkCompatible {}
 // MARK: -
 
 

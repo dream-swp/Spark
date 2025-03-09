@@ -8,24 +8,88 @@
 import XCTest
 @testable import Spark
 
-class SparkTests: XCTestCase { }
-
-extension SparkTests: SparkCompatible { }
-
-extension SK where SK: SparkTests {
-    func urlRequest(url: String = "https://wwww.spark.test.com", method: Spark.Method = .get, headers: Spark.Headers? = nil) throws -> URLRequest {
-        try URLRequest(url: url, method: method, headers: headers)
-    }
-}
-
-extension Data: SparkCompatible { }
-extension SK where SK == Data {
+class SparkTests: XCTestCase {
     
-    var string: String {
-        String(decoding: sk, as: UTF8.self)
+    
+    func test_request() throws {
+        
+        
+        let token: Spark.Token = .init()
+        
+        let parameters = ["type" : "json"]
+        Spark.default
+            .request(url: "https://api.vvhan.com/api/ian/rand", method: .get, parameters: parameters)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                }
+                token.unseal()
+            } receiveValue: {  data in
+                print(String(data: data, encoding: .utf8)!)
+            }.sk.seal(token)
+
     }
     
-    func JSONObject() throws -> Any {
-        try JSONSerialization.jsonObject(with: sk, options: .allowFragments)
+    
+    func test_A() {
+
+//        let parameters : [String : Any] = ["question" : "Favourite programming language?", "choices" : ["Swift", "Python", "Python", "Objective-C", "Ruby"]]
+//        
+//        let request: Spark.Request = .init()
+//            .scheme(.https)
+//            .port(.scheme(.https))
+//            .host(.custom("https://polls.apiblueprint.org/"))
+//            .path(.custom("questions"))
+//            .method(.post)
+//            .headers([.contentType("application/json")])
+//            .timeout(60)
+//            .cachePolicy(.useProtocolCachePolicy)
+//        
+//        let token: Spark.Token = .init()
+//        Spark.default
+//            .request(url: request, parameters: parameters)
+//            .receive(on: DispatchQueue.main)
+//            .sink { complete in
+//                if case .failure(let error) = complete {
+//                    print(error.localizedDescription)
+//                }
+//                token.unseal()
+//            } receiveValue: {  data in
+//                print(String(data: data, encoding: .utf8)!)
+//            }.sk.seal(token)
+//        request.urlRequest
+        
+//        let parameters : [String : Any] = ["wd" : "aa"]
+//        request.headers = [.contentType("application/json")]
+        
+        //        url --include \
+        //             --request POST \
+        //             --header "Content-Type: application/json" \
+        //             --data-binary "{
+        //            \"question\": \"Favourite programming language?\",
+        //            \"choices\": [
+        //                \"Swift\",
+        //                \"Python\",
+        //                \"Objective-C\",
+        //                \"Ruby\"
+        //            ]
+        //        }" \
+        //        'https://polls.apiblueprint.org/questions'
+        //        request.urlRequest
+//        let token: Spark.Token = .init()
+//        Spark.default
+//            .request(url: "https://www.baidu.com/s?", method: .get, parameters: parameters)
+//            .receive(on: DispatchQueue.main)
+//            .sink { complete in
+//                if case .failure(let error) = complete {
+//                    print(error.localizedDescription)
+//                }
+//                token.unseal()
+//            } receiveValue: {  data in
+//                print(String(data: data, encoding: .utf8)!)
+//            }.sk.seal(token)
     }
+
+    
 }

@@ -11,11 +11,12 @@ import XCTest
 final class SparkTestsJSONEncoding: SparkTests {
     
     private let encoding = Spark.JSONEncoding.default
+    private var urlRequest: URLRequest { sk.defaultRequest }
     
     func test_JSONEncoding_EncodeNilParameters() throws {
         
         // Given, When
-        let request = try encoding.encode(sk.urlRequest(), with: nil)
+        let request = try encoding.encode(urlRequest, with: nil)
 
         // Then
         XCTAssertNil(request.url?.query, "query should be nil")
@@ -32,7 +33,7 @@ final class SparkTestsJSONEncoding: SparkTests {
                                          "dictionary" : ["a": 1, "b": [2, 2], "c": [3, 3, 3]]]
 
         // When
-        let request = try encoding.encode(sk.urlRequest(), with: parameters)
+        let request = try encoding.encode(urlRequest, with: parameters)
 
         // Then
         XCTAssertNil(request.url?.query)
@@ -48,7 +49,7 @@ final class SparkTestsJSONEncoding: SparkTests {
         let array = ["value1", "value2", "value3"]
 
         // When
-        let request = try encoding.encode(sk.urlRequest(), jsonObject: array)
+        let request = try encoding.encode(urlRequest, jsonObject: array)
 
         // Then
         XCTAssertNil(request.url?.query)
@@ -59,8 +60,15 @@ final class SparkTestsJSONEncoding: SparkTests {
     }
     
     func test_JSONEncoding_ParametersRetainsCustomContentType() throws {
+       
         // Given
-        let request = try URLRequest(url: "https://wwww.spark.test.com", method: .get, headers: [.contentType("application/custom-json-type+json")])
+        var config = SKRequest()
+        config.scheme = .https
+        config.host = .custom("wwww.spark.test.com")
+        config.headers = [.contentType("application/custom-json-type+json")]
+        config.method = .get
+        let request = try config.skURLRequest()
+        
         let parameters = ["key": "value"]
 
         // When
@@ -120,7 +128,7 @@ final class SparkTestsJSONEncoding: SparkTests {
         let jsonData = try encoding.jsonData(parameters)
         
         // When
-        let request = try encoding.requestConfig(sk.urlRequest(), jsonData: jsonData)
+        let request = encoding.requestConfig(urlRequest, jsonData: jsonData)
         
         // Then
         let expected = ["Content-Type": "application/json"]
@@ -133,9 +141,11 @@ final class SparkTestsJSONEncoding: SparkTests {
         // Given
         let parameters = Spark.Headers(headers: [.accept("accept"), .contentType("application/json"), .authorization(bearerToken: "bearerToken")])
         let jsonData = try encoding.jsonData(parameters.dictionary)
+        var mutableURLRequest = urlRequest
+        mutableURLRequest.headers = parameters
         
         // When
-        let result = try encoding.requestConfig(sk.urlRequest(method: .get, headers: parameters), jsonData: jsonData)
+        let result = encoding.requestConfig(mutableURLRequest, jsonData: jsonData)
         
         // Then
         XCTAssertEqual(result.headers.dictionary, parameters.dictionary)
@@ -150,7 +160,7 @@ final class SparkTestsJSONEncoding: SparkTests {
                                             "dictionary" : ["a": "1",  "b": "2", "c": "3"]]
         
         // When
-        let result  = try encoding.encode(sk.urlRequest(), with: parameters)
+        let result  = try encoding.encode(urlRequest, with: parameters)
     
         // Then
         XCTAssertNil(result.url?.query)
