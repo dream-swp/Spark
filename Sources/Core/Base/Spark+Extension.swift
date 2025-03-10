@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Foundation
 
 extension Spark {
     
@@ -30,5 +31,24 @@ public extension SK where SK: AnyCancellable {
     func seal(_ token: Spark.Token) -> Void {
         token.cancellable = sk
     }
+}
+
+public extension SK where SK == JSONDecoder {
     
+    /// JSON Decoder
+    static var decoder: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }
+}
+
+public extension SK where SK == JSONEncoder {
+    
+    /// JSON Encoder
+    static var encoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        return encoder
+    }
 }

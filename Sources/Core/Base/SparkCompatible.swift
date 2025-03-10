@@ -54,6 +54,10 @@ extension NSNumber: SparkCompatible {}
 
 // MARK: - AnyCancellable: SparkCompatible
 extension AnyCancellable: SparkCompatible {}
+
+extension JSONDecoder: SparkCompatible { }
+extension JSONEncoder: SparkCompatible { }
+
 // MARK: -
 
 

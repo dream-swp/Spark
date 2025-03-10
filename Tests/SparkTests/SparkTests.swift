@@ -10,15 +10,16 @@ import XCTest
 
 class SparkTests: XCTestCase {
     
-    
-    func test_request() throws {
-        
+    func test_request1() throws {
         
         let token: Spark.Token = .init()
-        
         let parameters = ["type" : "json"]
         Spark.default
-            .request(url: "https://api.vvhan.com/api/ian/rand", method: .get, parameters: parameters)
+            .request(url: "https://api.vvhan.com/api/ian/rand",
+                     method: .get,
+                     encoding: Spark.URLEncoding.default,
+                     parameters: parameters,
+                     headers: [.contentType("application/json")])
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -31,65 +32,74 @@ class SparkTests: XCTestCase {
 
     }
     
+    func test_request2() {
+        
+        let token: Spark.Token = .init()
+        
+        let request: Spark.Request =
+            .get.url("https://api.vvhan.com/api/ian/shici")
+            .parameters(["type" : "json"])
+            .headers([.contentType("application/json")])
+        
+        Spark.default
+            .request(request)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                }
+                token.unseal()
+            } receiveValue: {  data in
+                print(String(data: data, encoding: .utf8)!)
+            }.sk.seal(token)
+    }
     
-    func test_A() {
-
-//        let parameters : [String : Any] = ["question" : "Favourite programming language?", "choices" : ["Swift", "Python", "Python", "Objective-C", "Ruby"]]
-//        
-//        let request: Spark.Request = .init()
-//            .scheme(.https)
-//            .port(.scheme(.https))
-//            .host(.custom("https://polls.apiblueprint.org/"))
-//            .path(.custom("questions"))
-//            .method(.post)
-//            .headers([.contentType("application/json")])
-//            .timeout(60)
-//            .cachePolicy(.useProtocolCachePolicy)
-//        
-//        let token: Spark.Token = .init()
-//        Spark.default
-//            .request(url: request, parameters: parameters)
-//            .receive(on: DispatchQueue.main)
-//            .sink { complete in
-//                if case .failure(let error) = complete {
-//                    print(error.localizedDescription)
-//                }
-//                token.unseal()
-//            } receiveValue: {  data in
-//                print(String(data: data, encoding: .utf8)!)
-//            }.sk.seal(token)
-//        request.urlRequest
+    func test_get1() {
+        let token: Spark.Token = .init()
+        let parameters = ["type" : "json"]
+        Spark.default
+            .get(url: "https://api.vvhan.com/api/text/dog", parameters: parameters)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                }
+                token.unseal()
+            } receiveValue: {  data in
+                print(String(data: data, encoding: .utf8)!)
+            }.sk.seal(token)
         
-//        let parameters : [String : Any] = ["wd" : "aa"]
-//        request.headers = [.contentType("application/json")]
-        
-        //        url --include \
-        //             --request POST \
-        //             --header "Content-Type: application/json" \
-        //             --data-binary "{
-        //            \"question\": \"Favourite programming language?\",
-        //            \"choices\": [
-        //                \"Swift\",
-        //                \"Python\",
-        //                \"Objective-C\",
-        //                \"Ruby\"
-        //            ]
-        //        }" \
-        //        'https://polls.apiblueprint.org/questions'
-        //        request.urlRequest
-//        let token: Spark.Token = .init()
-//        Spark.default
-//            .request(url: "https://www.baidu.com/s?", method: .get, parameters: parameters)
-//            .receive(on: DispatchQueue.main)
-//            .sink { complete in
-//                if case .failure(let error) = complete {
-//                    print(error.localizedDescription)
-//                }
-//                token.unseal()
-//            } receiveValue: {  data in
-//                print(String(data: data, encoding: .utf8)!)
-//            }.sk.seal(token)
+    }
+    
+    func test_get2() {
+        let token: Spark.Token = .init()
+        let parameters = ["type" : "json"]
+        Spark.default
+            .get(url: "https://api.vvhan.com/api/text/dog", parameters: parameters, model: DogResult.self)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                }
+                token.unseal()
+            } receiveValue: { model in
+                print(model)
+            }.sk.seal(token)
     }
 
-    
 }
+
+fileprivate extension SparkTests {
+    
+    struct DogResult: Codable  {
+        let success: Bool
+        let type: String
+        let data: DogResult.Data
+        
+        struct Data: Codable {
+            let `id`: Int
+            let content: String
+        }
+    }
+}
+

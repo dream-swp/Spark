@@ -20,31 +20,88 @@ public struct Spark : @unchecked Sendable {
 
 }
 
+// Get
+public extension Spark {
+    
+    func get(url: any URLConvert,
+             method: Spark.Method = .get,
+             encoding: Spark.ParameterEncoding = URLEncoding.default,
+             parameters: Spark.Parameters? = nil,
+             headers: Spark.Headers? = nil,
+             requestModifier: Spark.RequestModifier? = nil) -> AnyPublisher<Data, Swift.Error> {
+          request(url: url, method: .get, encoding: encoding, parameters: parameters, headers: headers, requestModifier: requestModifier)
+    }
+    
+    func get(_ request : Spark.Request) -> AnyPublisher<Data, Swift.Error> {
+        self.request(request)
+    }
+    
+    func get<Model>(url: any URLConvert,
+             method: Spark.Method = .get,
+             encoding: Spark.ParameterEncoding = URLEncoding.default,
+             parameters: Spark.Parameters? = nil,
+             headers: Spark.Headers? = nil,
+             requestModifier: Spark.RequestModifier? = nil,
+             model: Model.Type) -> AnyPublisher<Model, Swift.Error> where Model: Codable {
+          request(url: url, method: .get, encoding: encoding, parameters: parameters, headers: headers, requestModifier: requestModifier)
+            .decode(type: model, decoder: JSONDecoder.sk.decoder)
+            .eraseToAnyPublisher()
+    }
+    
+    func get<Model>(_ request : Spark.Request , model: Model.Type) -> AnyPublisher<Model, Swift.Error> where Model: Codable {
+        self.request(request)
+            .decode(type: model, decoder: JSONDecoder.sk.decoder)
+            .eraseToAnyPublisher()
+    }
+}
+
+public extension Spark {
+    
+    func request<Model>(url: any URLConvert,
+                       method: Spark.Method,
+                       encoding: Spark.ParameterEncoding,
+                       parameters: Spark.Parameters? = nil,
+                       headers: Spark.Headers? = nil,
+                       requestModifier: Spark.RequestModifier? = nil,
+                       model: Model.Type) -> AnyPublisher<Model, Swift.Error> where Model: Codable {
+        return request(url: url, method: method, encoding: encoding, parameters: parameters, headers: headers, requestModifier: requestModifier)
+            .decode(type: model, decoder: JSONDecoder.sk.decoder)
+            .eraseToAnyPublisher()
+    }
+    
+    func request<Model>(_ request : Spark.Request, model: Model.Type) -> AnyPublisher<Model, Swift.Error> where Model: Codable {
+        return self.request(request).decode(type: model, decoder: JSONDecoder.sk.decoder).eraseToAnyPublisher()
+    }
+}
+
 public extension Spark {
     
     func request(url: any URLConvert,
-                 method: Spark.Method = .get,
-                 encoding: Spark.ParameterEncoding = URLEncoding.default,
+                 method: Spark.Method,
+                 encoding: Spark.ParameterEncoding,
                  parameters: Spark.Parameters? = nil,
                  headers: Spark.Headers? = nil,
                  requestModifier: Spark.RequestModifier? = nil) -> AnyPublisher<Data, Swift.Error> {
         
-
-        let convert: RequestConvert =
+        let convert: Request =
             .init(url: url)
             .method(method)
             .encoding(encoding)
             .parameters(parameters)
             .headers(headers)
             .requestModifier(requestModifier)
+        return request(convert)
+    }
     
-        guard let request = convert.urlRequest else {
+    func request(_ request: Spark.Request) -> AnyPublisher<Data, Swift.Error> {
+        
+        guard let urlRequest = request.urlRequest else {
             return Fail(error: Spark.Error.urlError).eraseToAnyPublisher()
         }
-
+        
         return URLSession
             .shared
-            .dataTaskPublisher(for: request)
+            .dataTaskPublisher(for: urlRequest)
             .tryMap { data, response in
                 guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
                     if let log = String(data: data, encoding: .utf8) {
@@ -55,50 +112,5 @@ public extension Spark {
                 return data
             }
             .eraseToAnyPublisher()
-    }
-    
-//    func request(_ request: Spark.Request,
-//                 requestModifier: Spark.RequestModifier? = nil) -> AnyPublisher<Data, Swift.Error> {
-//        
-////        request.requestModifier = requestModifier;
-//        guard let urlRequest = try? request.skURLRequest() else {
-//            return Fail(error: Spark.Error.urlError).eraseToAnyPublisher()
-//
-//        }
-//        
-//        
-//        return URLSession
-//            .shared
-//            .dataTaskPublisher(for: urlRequest)
-//            .tryMap { data, response in
-//                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-//                    if let log = String(data: data, encoding: .utf8) {
-//                        debugPrint(log)
-//                    }
-//                    throw Spark.Error.invalidResponse
-//                }
-//                return data
-//            }
-//            .eraseToAnyPublisher()
-////        let convert = convert(urlRequest, method: request.method, parameters: request.parameters, encoding: request.encoding, requestModifier: requestModifier)
-//        
-//    }
-}
-
-extension Spark {
-    
-    func convert(_ url: any Spark.URLConvert,
-                     method: Spark.Method,
-                     parameters: Spark.Parameters?,
-                     encoding: Spark.ParameterEncoding,
-                     headers: Spark.Headers? = nil,
-                     requestModifier: Spark.RequestModifier?) -> RequestConvert {
-        
-        return Spark.RequestConvert(url: url,
-                                    method: method,
-                                    encoding: encoding,
-                                    parameters: parameters,
-                                    headers: headers,
-                                    requestModifier: requestModifier)
     }
 }
