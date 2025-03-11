@@ -8,33 +8,33 @@
 import Foundation
 
 // MARK: - URLConvert
-extension Spark  {
-    
+extension Spark {
+
     /// Types adopting the `URLConvert` protocol can be used to construct `URL`s, which can then be used to construct
     public protocol URLConvert: Sendable {
-        
+
         /// Returns a `URL` from the conforming instance or throws.
         ///
         /// - Returns: The `URL` created from the instance.
         /// - Throws:  Any error thrown while creating the `URL`.
         func skURL() throws -> URL
     }
-    
+
     /// Types adopting the `URLRequestConvert` protocol can be used to safely construct `URLRequest`s.
     public protocol URLRequestConvert: Sendable {
-        
+
         /// Returns a `URLRequest` or throws if an `Error` was encountered.
         ///
         /// - Returns: A `URLRequest`.
         /// - Throws:  Any error thrown while constructing the `URLRequest`.
         func skURLRequest() throws -> URLRequest
     }
-    
+
 }
 
 // MARK: - String: Spark.URLConvert Extension
 extension String: Spark.URLConvert {
-    
+
     /// Returns a `URL` if `self` can be used to initialize a `URL` instance, otherwise throws.
     ///
     /// - Returns: The `URL` initialized with `self`.
@@ -47,15 +47,14 @@ extension String: Spark.URLConvert {
 
 // MARK: - URL: Spark.URLConvert
 extension URL: Spark.URLConvert {
-    
+
     /// Returns `self`.
     public func skURL() throws -> URL { self }
 }
 
-
 // MARK: - URLComponents: Spark.URLConvert
 extension URLComponents: Spark.URLConvert {
-    
+
     /// Returns a `URL` if the `self`'s `url` is not nil, otherwise throws.
     ///
     /// - Returns: The `URL` from the `url` property.
@@ -67,10 +66,10 @@ extension URLComponents: Spark.URLConvert {
 }
 
 // MARK: - Spark.URLRequestConvert Extension
-public extension Spark.URLRequestConvert {
-    
+extension Spark.URLRequestConvert {
+
     /// The `URLRequest` returned by discarding any `Error` encountered.
-    var urlRequest: URLRequest? { try? skURLRequest() }
+    public var urlRequest: URLRequest? { try? skURLRequest() }
 }
 
 // MARK: - URLRequest: Spark.URLRequestConvert
@@ -81,8 +80,8 @@ extension URLRequest: Spark.URLRequestConvert {
 }
 
 // MARK: - URLRequest Extension
-public extension URLRequest {
-    
+extension URLRequest {
+
     /// Creates an instance with the specified `url`, `method`, and `headers`.
     ///
     /// - Parameters:
@@ -90,7 +89,7 @@ public extension URLRequest {
     ///   - method:  The `Spark.Method`.
     ///   - headers: The `Spark.Headers`, `nil` by default.
     /// - Throws:    Any error thrown while converting the `URLRequest` to a `URL`.
-    init(url: any Spark.URLConvert, method: Spark.Method, headers: Spark.Headers? = nil) throws {
+    public init(url: any Spark.URLConvert, method: Spark.Method, headers: Spark.Headers? = nil) throws {
         let url = try url.skURL()
         self.init(url: url)
         httpMethod = method.rawValue
@@ -98,17 +97,17 @@ public extension URLRequest {
     }
 
     /// Returns the `Method` as `Spark.Method` type.
-    var method: Spark.Method? {
+    public var method: Spark.Method? {
         set { httpMethod = newValue?.rawValue }
-        get { httpMethod.map(Spark.Method.init)  }
+        get { httpMethod.map(Spark.Method.init) }
     }
 
     /// Returns the `Headers` as `Spark.Headers`
-    var headers: Spark.Headers {
+    public var headers: Spark.Headers {
         set { allHTTPHeaderFields = newValue.dictionary }
         get { allHTTPHeaderFields.map(Spark.Headers.init) ?? Spark.Headers() }
     }
-    
+
 }
 
 // MARK: -

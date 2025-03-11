@@ -6,23 +6,22 @@
 //
 
 // MARK: - Spark.Method
-public extension Spark {
-    
+extension Spark {
+
     /// Request Method
-    enum Method: (String) {
-        
+    public enum Method: (String) {
+
         /// `GET` method.
         case get = "GET"
-        
+
         /// `POST` method.
         case post = "POST"
-        
-        
+
         /// `Spark.Header` Initialization method
         /// - Parameter rawValue: Method String
         public init(_ rawValue: String) {
             switch rawValue {
-            case "GET" :
+            case "GET":
                 self = .get
             case "POST":
                 self = .post
@@ -34,5 +33,5 @@ public extension Spark {
 }
 
 // MARK: - Spark.Method: Sendable
-extension Spark.Method: Sendable { }
+extension Spark.Method: Sendable {}
 // MARK: -

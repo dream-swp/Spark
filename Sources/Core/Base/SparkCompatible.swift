@@ -5,40 +5,39 @@
 //  Created by Dream on 2025/2/26.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 // MARK: - SparkCompatible
 /// SparkCompatible, Isolation Agreement
-public protocol SparkCompatible { }
-
+public protocol SparkCompatible {}
 
 // MARK: - SK
 /// Isolation
 public struct SK<SK> {
-    
+
     /// Prefix property
     public let sk: SK
-    
+
     /// Initialization method
     /// - Parameter ds: DS
-    public init(_ sp : SK) {
+    public init(_ sp: SK) {
         self.sk = sp
     }
 }
 
 // MARK: - SparkCompatible Extension
-public extension SparkCompatible {
-    
+extension SparkCompatible {
+
     /// Instance property
-    var sk: SK<Self> {
-        set { }
+    public var sk: SK<Self> {
+        set {}
         get { SK(self) }
     }
-    
+
     /// Static property
-    static var sk: SK<Self>.Type {
-        set { }
+    public static var sk: SK<Self>.Type {
+        set {}
         get { SK<Self>.self }
     }
 }
@@ -55,10 +54,10 @@ extension NSNumber: SparkCompatible {}
 // MARK: - AnyCancellable: SparkCompatible
 extension AnyCancellable: SparkCompatible {}
 
-extension JSONDecoder: SparkCompatible { }
-extension JSONEncoder: SparkCompatible { }
+// MARK: - JSONDecoder: SparkCompatible
+extension JSONDecoder: SparkCompatible {}
+
+// MARK: - JSONEncoder: SparkCompatible
+extension JSONEncoder: SparkCompatible {}
 
 // MARK: -
-
-
-

@@ -8,19 +8,19 @@
 import Foundation
 
 // MARK: - Spark.JSONEncoding
-public extension Spark {
-    
-    struct JSONEncoding {
-        
+extension Spark {
+
+    public struct JSONEncoding {
+
         /// Returns a `Spark.JSONEncoding` instance with default writing options.
         public static var `default`: Spark.JSONEncoding { Spark.JSONEncoding() }
-        
+
         /// Returns a `JSONEncoding` instance with `.prettyPrinted` writing options.
         public static var prettyPrinted: Spark.JSONEncoding { Spark.JSONEncoding(options: .prettyPrinted) }
-        
+
         /// The options for writing the parameters as JSON data.
         public let options: JSONSerialization.WritingOptions
-        
+
         /// Creates an instance using the specified `WritingOptions`.
         /// - Parameter options: `JSONSerialization.WritingOptions` to use.
         public init(options: JSONSerialization.WritingOptions = []) {
@@ -31,7 +31,7 @@ public extension Spark {
 
 // MARK: - Encoding
 extension Spark.JSONEncoding: Spark.ParameterEncoding {
-    
+
     /// URLRequest JSON encoding
     /// - Parameters:
     ///   - urlRequest: Coding `URLRequest`
@@ -40,32 +40,31 @@ extension Spark.JSONEncoding: Spark.ParameterEncoding {
     public func encode(_ urlRequest: any Spark.URLRequestConvert, with parameters: Spark.Parameters? = nil) throws -> URLRequest {
         return try encode(urlRequest, jsonObject: parameters)
     }
-    
-    
+
     /// URLRequest JSON encoding
     /// - Parameters:
     ///   - urlRequest: Coding `URLRequest`
     ///   - jsonObject: Coding `jsonObject` = Any
     /// - Returns: The encoding completed URLRequest
     public func encode(_ urlRequest: any Spark.URLRequestConvert, jsonObject: Any? = nil) throws -> URLRequest {
-         
+
         let urlRequest = try urlRequest.skURLRequest()
-        
+
         guard let jsonObject = jsonObject else { return urlRequest }
-        
+
         try isValidJSONObject(jsonObject)
-        
+
         let jsonData = try jsonData(jsonObject, options: options)
-        
+
         let request = requestConfig(urlRequest, jsonData: jsonData)
-        
+
         return request
     }
-    
+
 }
 
-internal extension Spark.JSONEncoding {
-    
+extension Spark.JSONEncoding {
+
     /// Used to validate Can be converted to JSON data
     /// - Top level object is an NSArray or NSDictionary
     /// - All objects are NSString, NSNumber, NSArray, NSDictionary, or NSNull
@@ -74,7 +73,7 @@ internal extension Spark.JSONEncoding {
     /// - Parameter jsonObject: validate parameters
     /// - Returns: throws Invalid JSON object provided for parameter or object encoding. \
     /// This is most likely due to a value which can't be represented in Objective-C.
-    func isValidJSONObject(_ jsonObject: Any) throws -> Void {
+    func isValidJSONObject(_ jsonObject: Any) throws {
         guard JSONSerialization.isValidJSONObject(jsonObject) else {
             throw Spark.Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: Spark.Error.JSONEncodingError.invalidJSONObject))
         }
@@ -92,7 +91,7 @@ internal extension Spark.JSONEncoding {
             throw Spark.Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
         }
     }
-    
+
     /// URLRequest Config
     /// - Parameters:
     ///   - urlRequest: Coding `URLRequest`
@@ -100,15 +99,14 @@ internal extension Spark.JSONEncoding {
     /// - Returns: URLRequest
     func requestConfig(_ urlRequest: URLRequest, jsonData: Data) -> URLRequest {
         var request = urlRequest
-        
+
         if request.headers[Spark.Header.Key.ContentType] == nil {
             request.headers.update(.contentType("application/json"))
         }
         request.httpBody = jsonData
-        
+
         return request
     }
 }
 
 // MARK: -
-

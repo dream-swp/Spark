@@ -9,46 +9,46 @@ import Combine
 import Foundation
 
 extension Spark {
-    
-     public class Token {
-        
+
+    public class Token {
+
         /// AnyCancellable
         fileprivate var cancellable: AnyCancellable? = nil
-        
+
         /// Remove token
         public func unseal() { cancellable = nil }
-        
+
         public init(cancellable: AnyCancellable? = nil) {
             self.cancellable = cancellable
         }
     }
-    
+
 }
 
+extension SK where SK: AnyCancellable {
 
-public extension SK where SK: AnyCancellable {
-    
-    func seal(_ token: Spark.Token) -> Void {
+    public func seal(_ token: Spark.Token) {
         token.cancellable = sk
     }
 }
 
-public extension SK where SK == JSONDecoder {
-    
+extension SK where SK == JSONDecoder {
+
     /// JSON Decoder
-    static var decoder: JSONDecoder {
+    public static var decoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }
 }
 
-public extension SK where SK == JSONEncoder {
-    
+extension SK where SK == JSONEncoder {
+
     /// JSON Encoder
-    static var encoder: JSONEncoder {
+    public static var encoder: JSONEncoder {
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
         return encoder
     }
 }
+
