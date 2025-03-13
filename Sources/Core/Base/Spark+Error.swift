@@ -7,27 +7,24 @@
 
 import Foundation
 
-// MARK: - Spark.Error
-extension Spark {
+/// `Error` is the error type returned by
+public enum Error: Swift.Error {
+    /// Request URL Error
+    case urlError
 
-    /// `Error` is the error type returned by Spark.
-    public enum Error: Swift.Error {
-        /// Request URL Error
-        case urlError
+    /// Invalid response to the request.
+    case invalidResponse
 
-        /// Invalid response to the request.
-        case invalidResponse
+    /// Request Parameters Encoding Failed
+    case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
 
-        /// Request Parameters Encoding Failed
-        case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
-
-        /// `URLConvertible` type failed to create a valid `URL`.
-        case invalidURL(url: any URLConvert)
-    }
+    /// `URLConvertible` type failed to create a valid `URL`.
+    case invalidURL(url: any URLConvert)
+    
 }
 
-// MARK: - Spark.Error: Public
-extension Spark.Error {
+// MARK: - Error: Public
+extension Error {
 
     /// Returns whether the instance is `.urlError`.
     public var isURLError: Bool {
@@ -55,11 +52,11 @@ extension Spark.Error {
     }
 }
 
-// MARK: - Spark.Error: Sendable
-extension Spark.Error: Sendable {}
+// MARK: - Error: Sendable
+extension Error: Sendable {}
 
-// MARK: - Spark.Error: LocalizedError
-extension Spark.Error: LocalizedError {
+// MARK: - Error: LocalizedError
+extension Error: LocalizedError {
     var localizedDescription: String {
         switch self {
         case .urlError: "Request URL Error"
@@ -70,22 +67,22 @@ extension Spark.Error: LocalizedError {
     }
 }
 
-// MARK: - Spark.Error.ParameterEncodingFailureReason
-extension Spark.Error {
+// MARK: - Error.ParameterEncodingFailureReason
+extension Error {
 
     /// The underlying reason the `.parameterEncodingFailed` error occurred.
     public enum ParameterEncodingFailureReason: Sendable {
         /// The `URLRequest` did not have a `URL` to encode.
         case missingURL
         /// JSON serialization failed with an underlying system error during the encoding process.
-        case jsonEncodingFailed(error: any Error)
+        case jsonEncodingFailed(error: any Swift.Error)
         /// Custom parameter encoding failed due to the associated `Error`.
-        case customEncodingFailed(error: any Error)
+        case customEncodingFailed(error: any Swift.Error)
     }
 }
 
-// MARK: - Spark.Error.ParameterEncodingFailureReason: LocalizedError
-extension Spark.Error.ParameterEncodingFailureReason: LocalizedError {
+// MARK: - Error.ParameterEncodingFailureReason: LocalizedError
+extension Error.ParameterEncodingFailureReason: LocalizedError {
 
     var localizedDescription: String {
         switch self {
@@ -96,15 +93,15 @@ extension Spark.Error.ParameterEncodingFailureReason: LocalizedError {
     }
 }
 
-// MARK: - Spark.Error.JSONEncodingError
-extension Spark.Error {
+// MARK: - Error.JSONEncodingError
+extension Error {
     public enum JSONEncodingError {
         case invalidJSONObject
     }
 }
 
-// MARK: - Spark.Error.JSONEncodingError: LocalizedError
-extension Spark.Error.JSONEncodingError: LocalizedError {
+// MARK: - Error.JSONEncodingError: LocalizedError
+extension Error.JSONEncodingError: LocalizedError {
     var localizedDescription: String {
         """
         Invalid JSON object provided for parameter or object encoding. \

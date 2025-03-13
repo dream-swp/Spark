@@ -31,7 +31,7 @@ extension ContentView {
         Spark.default
             .request(url: "https://api.vvhan.com/api/ian/rand",
                      method: .get,
-                     encoding: Spark.URLEncoding.default,
+                     encoding: URLEncoding.default,
                      parameters: parameters,
                      headers: [.contentType("application/json")])
             .receive(on: DispatchQueue.main)
@@ -46,7 +46,7 @@ extension ContentView {
     }
     
     func test1()  {
-        let token: Spark.Token = .init()
+        let token: Token = .init()
         
         let parameters: [String : Any] = ["id" : 15,
                                           "userId": 21,
@@ -56,7 +56,7 @@ extension ContentView {
         Spark.default
             .request(url: "https://fakestoreapi.com/carts",
                      method: .post,
-                     encoding: Spark.JSONEncoding.default,
+                     encoding: JSONEncoding.default,
                      parameters: parameters,
                      headers: [.contentType("application/json")])
             .receive(on: DispatchQueue.main)

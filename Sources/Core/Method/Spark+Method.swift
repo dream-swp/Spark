@@ -5,33 +5,30 @@
 //  Created by Dream on 2025/2/22.
 //
 
-// MARK: - Spark.Method
-extension Spark {
+// MARK: - Method
+/// Request Method
+public enum Method: (String) {
 
-    /// Request Method
-    public enum Method: (String) {
+    /// `GET` method.
+    case get = "GET"
 
-        /// `GET` method.
-        case get = "GET"
+    /// `POST` method.
+    case post = "POST"
 
-        /// `POST` method.
-        case post = "POST"
-
-        /// `Spark.Header` Initialization method
-        /// - Parameter rawValue: Method String
-        public init(_ rawValue: String) {
-            switch rawValue {
-            case "GET":
-                self = .get
-            case "POST":
-                self = .post
-            default:
-                self = .get
-            }
+    /// `Header` Initialization method
+    /// - Parameter rawValue: Method String
+    public init(_ rawValue: String) {
+        switch rawValue {
+        case "GET":
+            self = .get
+        case "POST":
+            self = .post
+        default:
+            self = .get
         }
     }
 }
 
-// MARK: - Spark.Method: Sendable
-extension Spark.Method: Sendable {}
+// MARK: - Method: Sendable
+extension Method: Sendable {}
 // MARK: -

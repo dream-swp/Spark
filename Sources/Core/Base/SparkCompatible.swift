@@ -60,4 +60,7 @@ extension JSONDecoder: SparkCompatible {}
 // MARK: - JSONEncoder: SparkCompatible
 extension JSONEncoder: SparkCompatible {}
 
+// MARK: - Data: SparkCompatible
+extension Data: SparkCompatible {}
+
 // MARK: -

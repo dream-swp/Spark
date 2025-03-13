@@ -9,19 +9,18 @@ import XCTest
 
 @testable import Spark
 
+@MainActor
 final class SparkTestsGet: SparkTests {
+
+    private let sk = Spark.default
 
     func test_request1() throws {
 
-        let token: Spark.Token = .init()
+        // Given, When
+        let token: Token = .init()
 
-        Spark.default
-            .request(
-                url: SchemeGet.rand, method: .get,
-                encoding: Spark.URLEncoding.default,
-                parameters: parameters,
-                headers: headers
-            )
+        // Then
+        sk.request(convert: SchemeGet.rand, method: .get, encoding: URLEncoding.default, parameters: parameters, headers: headers)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -29,6 +28,8 @@ final class SparkTestsGet: SparkTests {
                 }
                 token.unseal()
             } receiveValue: { data in
+                print("\r\(#function) -> \(SchemeGet.rand.rawValue) : ")
+                print(data.sk.string)
                 XCTAssertNotNil(data)
             }.sk.seal(token)
 
@@ -36,12 +37,12 @@ final class SparkTestsGet: SparkTests {
 
     func test_request2() throws {
 
-        let token: Spark.Token = .init()
+        // Given, When
+        let token: Token = .init()
+        let request: RequestConvert = .get { SchemeGet.dongman }.parameters(parameters).headers(headers)
 
-        let request: Spark.Request = .get { SchemeGet.dongman }.parameters(parameters).headers(headers)
-
-        Spark.default
-            .request(request)
+        // Then
+        sk.request(request)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -49,22 +50,19 @@ final class SparkTestsGet: SparkTests {
                 }
                 token.unseal()
             } receiveValue: { data in
+                print("\r\(#function) -> \(SchemeGet.dongman.rawValue) : ")
+                print(data.sk.string)
                 XCTAssertNotNil(data)
             }.sk.seal(token)
     }
 
     func test_request3() throws {
 
-        let token: Spark.Token = .init()
+        // Given, When
+        let token: Token = .init()
 
-        Spark.default
-            .request(
-                url: SchemeGet.wenxue, method: .get,
-                encoding: Spark.URLEncoding.default,
-                parameters: parameters,
-                headers: headers,
-                model:Rand.self
-            )
+        // Then
+        sk.request(convert: SchemeGet.wenxue, method: .get, encoding: URLEncoding.default, parameters: parameters, headers: headers, model: Model1.self)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -72,19 +70,21 @@ final class SparkTestsGet: SparkTests {
                 }
                 token.unseal()
             } receiveValue: { model in
+                print("\r\(#function) -> \(SchemeGet.wenxue.rawValue) : ")
+                print(model)
                 XCTAssertNotNil(model)
             }.sk.seal(token)
 
     }
-    
+
     func test_request4() throws {
 
-        let token: Spark.Token = .init()
+        // Given, When
+        let token: Token = .init()
+        let request: RequestConvert = .get { SchemeGet.shici }.parameters(parameters).headers(headers)
 
-        let request: Spark.Request = .get { SchemeGet.shici }.parameters(parameters).headers(headers)
-
-        Spark.default
-            .request(request, model: Rand.self)
+        // Then
+        sk.request(request, model: Model1.self)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -92,16 +92,19 @@ final class SparkTestsGet: SparkTests {
                 }
                 token.unseal()
             } receiveValue: { model in
+                print("\r\(#function) -> \(SchemeGet.shici.rawValue) : ")
+                print(model)
                 XCTAssertNotNil(model)
             }.sk.seal(token)
     }
 
     func test_get1() throws {
 
-        let token: Spark.Token = .init()
+        // Given, When
+        let token: Token = .init()
 
-        Spark.default
-            .get(url: SchemeGet.sexy, parameters: parameters, headers: headers)
+        // Then
+        sk.get(convert: SchemeGet.sexy, parameters: parameters, headers: headers)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -109,17 +112,41 @@ final class SparkTestsGet: SparkTests {
                 }
                 token.unseal()
             } receiveValue: { data in
-                print(String(data: data, encoding: .utf8)!)
+                print("\r\(#function) -> \(SchemeGet.sexy.rawValue) : ")
+                print(data.sk.string)
+                XCTAssertNotNil(data)
             }.sk.seal(token)
 
     }
 
     func test_get2() throws {
 
-        let token: Spark.Token = .init()
+        // Given, When
+        let token: Token = .init()
+        let request: RequestConvert = .get { SchemeGet.love }.parameters(parameters).headers(headers)
 
-        Spark.default
-            .get(url: SchemeGet.dog, parameters: parameters, headers: headers, model: Sexy.self)
+        // Then
+        sk.get(request)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                }
+                token.unseal()
+            } receiveValue: { data in
+                print("\r\(#function) -> \(SchemeGet.love.rawValue) : ")
+                print(data.sk.string)
+                XCTAssertNotNil(data)
+            }.sk.seal(token)
+    }
+
+    func test_get3() throws {
+
+        // Given, When
+        let token: Token = .init()
+
+        // Then
+        sk.get(convert: SchemeGet.joke, parameters: parameters, headers: headers, model: Model3.self)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -127,8 +154,53 @@ final class SparkTestsGet: SparkTests {
                 }
                 token.unseal()
             } receiveValue: { model in
+                print("\r\(#function) -> \(SchemeGet.love.rawValue) : ")
                 print(model)
+                XCTAssertNotNil(model)
             }.sk.seal(token)
+    }
+
+    func test_get4() throws {
+
+        // Given, When
+        let token: Token = .init()
+        let request: RequestConvert = .get { SchemeGet.dog }.parameters(parameters).headers(headers)
+
+        // Then
+        sk.get(request, model: Model2.self)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                }
+                token.unseal()
+            } receiveValue: { model in
+                print("\r\(#function) -> \(SchemeGet.dog.rawValue) : ")
+                print(model)
+                XCTAssertNotNil(model)
+            }.sk.seal(token)
+
+    }
+
+    func test_request_error() throws {
+
+        // Given, When
+        let token: Token = .init()
+        let request: RequestConvert = .get { "" }.parameters(parameters).headers(headers)
+
+        // Then
+        sk.get(request).sink { complete in
+            if case .failure(let error) = complete {
+                print(error.localizedDescription)
+                XCTAssertNotNil(error)
+                XCTAssertEqual((error as? Error)?.localizedDescription, Error.urlError.localizedDescription)
+                print("\r\(#function) -> \(error.localizedDescription) : ")
+            }
+            token.unseal()
+        } receiveValue: { model in
+            print(model)
+            XCTAssertNotNil(model)
+        }.sk.seal(token)
+
     }
 
 }
@@ -136,7 +208,7 @@ final class SparkTestsGet: SparkTests {
 extension SparkTests {
 
     fileprivate var parameters: [String: Any] { ["type": "json"] }
-    fileprivate var headers: Spark.Headers { [.contentType(.application(.json))] }
+    fileprivate var headers: Headers { [.contentType(.application(.json))] }
 
     ///
     /// Domain Name, 请求方式: GET, 返回格式：TXT/JSON/JS
@@ -164,7 +236,7 @@ extension SparkTests {
     /// - love: {"success":true,"type":"情话","data":{"id":199,"content":"上一秒想问你牛奶糖果布丁巧克力果汁甜甜圈冰淇淋要哪一个，下一秒算了算了全都给你"}}
     /// - joke: {"success":true,"type":"笑话","data":{"id":64,"title":"沉默是金","content":"自习课班里特别乱，班长在黑板上写下了“沉默是金”四个大字。班里一逗比说：“沉默是金，都别跟我说话，我要攒钱。”"}}
     /// - dog:  {"success":true,"type":"舔狗日记","data":{"id":1,"content":"看到你和一个帅哥吃饭，看起来关系很亲密的样子，你从来没有告诉我你还有这么好的朋友，一定是怕我多想，你总是为我着想，你对我真好。"}}
-    fileprivate enum SchemeGet: (String), Spark.URLConvert {
+    fileprivate enum SchemeGet: (String), URLConvert {
 
         case rand = "https://api.vvhan.com/api/ian/rand"
         case dongman = "https://api.vvhan.com/api/ian/dongman"
@@ -195,7 +267,8 @@ extension SparkTests {
         var content: String { get set }
     }
 
-    fileprivate struct Rand: SparkTests.Result {
+    //  rand | dongman | wenxue | shici
+    fileprivate struct Model1: SparkTests.Result {
         var success: Bool
         var type: String
         var data: Data
@@ -207,33 +280,34 @@ extension SparkTests {
             var content: String
         }
     }
-    
-    fileprivate struct Sexy: SparkTests.Result {
+
+    // sexy | dog | love | dog
+    fileprivate struct Model2: SparkTests.Result {
 
         var success: Bool
         var type: String
-        
+
         var data: Data
-        
+
         struct Data: SparkTests.Data {
             var id: Int
-
             var content: String
         }
-        
+
     }
 
-    fileprivate struct Dog: SparkTests.Result {
+    // joke
+    struct Model3: SparkTests.Result {
+
         var success: Bool
         var type: String
-        var data: Dog.Data
 
         struct Data: SparkTests.Data {
-            var `id`: Int
+            var id: Int
             var content: String
+            var title: String
+
         }
     }
-    
-    
 
 }

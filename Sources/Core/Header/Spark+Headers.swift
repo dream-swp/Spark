@@ -5,46 +5,44 @@
 //  Created by Dream on 2025/2/25.
 //
 
-// MARK: - Spark.Headers
-extension Spark {
+// MARK: - Headers
 
-    /// Packaging Headers settings Request Head
-    public struct Headers {
+/// Packaging Headers settings Request Head
+public struct Headers {
 
-        /// Save Headers data for internal use
-        private var headers: [Header] = []
+    /// Save Headers data for internal use
+    private var headers: [Header] = []
 
-        /// `Spark.Headers` Initialization method
-        public init() {}
+    /// `Headers` Initialization method
+    public init() {}
 
-        /// `Spark.Header` Initialization method
-        /// - Parameter headers: [Header]
-        public init(headers: [Header]) {
-            headers.forEach { update($0) }
-        }
-
-        /// `Spark.Headers` Initialization method
-        /// - Parameter dictionary: [String: String]
-        public init(_ dictionary: [String: String]) {
-            dictionary.forEach { update(Header(name: $0.key, value: $0.value)) }
-        }
-
-        /// `Spark.Headers` Initialization method
-        /// - Parameter dictionary: [Spark.Header.Key: String]
-        public init(_ dictionary: [Spark.Header.Key: String]) {
-            dictionary.forEach { update(Header(key: $0.key, value: $0.value)) }
-        }
-
+    /// `Header` Initialization method
+    /// - Parameter headers: [Header]
+    public init(headers: [Header]) {
+        headers.forEach { update($0) }
     }
+
+    /// `Headers` Initialization method
+    /// - Parameter dictionary: [String: String]
+    public init(_ dictionary: [String: String]) {
+        dictionary.forEach { update(Header(name: $0.key, value: $0.value)) }
+    }
+
+    /// `Headers` Initialization method
+    /// - Parameter dictionary: [Header.Key: String]
+    public init(_ dictionary: [Header.Key: String]) {
+        dictionary.forEach { update(Header(key: $0.key, value: $0.value)) }
+    }
+
 }
 
-extension Spark.Headers {
+extension Headers {
 
     /// Added request header data
     /// - Parameters:
     ///   - key: request header `key`
     ///   - value: request header `value`
-    public mutating func add(key: Spark.Header.Key, value: String) {
+    public mutating func add(key: Header.Key, value: String) {
         update(key: key, value: value)
     }
 
@@ -60,8 +58,8 @@ extension Spark.Headers {
     /// - Parameters:
     ///   - key: request header `key`
     ///   - value: request header `value`
-    public mutating func update(key: Spark.Header.Key, value: String) {
-        update(Spark.Header(key: key, value: value))
+    public mutating func update(key: Header.Key, value: String) {
+        update(Header(key: key, value: value))
     }
 
     /// Update request header data
@@ -69,12 +67,12 @@ extension Spark.Headers {
     ///   - name: request header `name`
     ///   - value: request header `value`
     public mutating func update(name: String, value: String) {
-        update(Spark.Header(name: name, value: value))
+        update(Header(name: name, value: value))
     }
 
     /// Update request header data
-    /// - Parameter header: Spark.Header
-    public mutating func update(_ header: Spark.Header) {
+    /// - Parameter header: Header
+    public mutating func update(_ header: Header) {
         guard let index = headers.index(of: header.name) else {
             headers.append(header)
             return
@@ -84,7 +82,7 @@ extension Spark.Headers {
 
     /// Remove request header data
     /// - Parameter key: request header `key`
-    public mutating func remove(key: Spark.Header.Key) {
+    public mutating func remove(key: Header.Key) {
         remove(name: key.rawValue)
     }
 
@@ -98,7 +96,7 @@ extension Spark.Headers {
     /// Get the request header data according to the name
     /// - Parameter key: request header `key`
     /// - Returns: request header `value`
-    public func value(for key: Spark.Header.Key) -> String? {
+    public func value(for key: Header.Key) -> String? {
         value(for: key.rawValue)
     }
 
@@ -116,14 +114,14 @@ extension Spark.Headers {
     }
 
     /// Request header number sorted according to the name
-    /// - Returns: `Spark.Header`
+    /// - Returns: `Header`
     public func sorted() -> Self {
         var headers = self
         headers.sort()
         return headers
     }
 
-    /// `[Spark.Headers]` converts to dictionary data
+    /// `[Headers]` converts to dictionary data
     public var dictionary: [String: String] {
         let namesAndValues = headers.map { ($0.name, $0.value) }
         return Dictionary(namesAndValues, uniquingKeysWith: { _, last in last })
@@ -146,7 +144,7 @@ extension Spark.Headers {
     /// Get the request header data, according to the index
     /// - Parameter key: request header `key`
     /// - Returns: request header `value`
-    public subscript(_ key: Spark.Header.Key) -> String? {
+    public subscript(_ key: Header.Key) -> String? {
         get { value(for: key) }
         set {
             if let value = newValue {
@@ -159,11 +157,11 @@ extension Spark.Headers {
 
 }
 
-// MARK: - Spark.Headers: Equatable, Hashable, Sendable
-extension Spark.Headers: Equatable, Hashable, Sendable {}
+// MARK: - Headers: Equatable, Hashable, Sendable
+extension Headers: Equatable, Hashable, Sendable {}
 
-// MARK: - Spark.Headers: Collection
-extension Spark.Headers: Collection {
+// MARK: - Headers: Collection
+extension Headers: Collection {
 
     /// first index
     public var startIndex: Int {
@@ -193,13 +191,13 @@ extension Spark.Headers: Collection {
         headers.index(before: i)
     }
 
-    public subscript(position: Int) -> Spark.Header {
+    public subscript(position: Int) -> Header {
         headers[position]
     }
 }
 
-// MARK: - Spark.Headers: ExpressibleByDictionaryLiteral
-extension Spark.Headers: ExpressibleByDictionaryLiteral {
+// MARK: - Headers: ExpressibleByDictionaryLiteral
+extension Headers: ExpressibleByDictionaryLiteral {
 
     public init(dictionaryLiteral elements: (String, String)...) {
         elements.forEach { update(name: $0.0, value: $0.1) }
@@ -207,24 +205,24 @@ extension Spark.Headers: ExpressibleByDictionaryLiteral {
 
 }
 
-// MARK: - Spark.Headers: ExpressibleByArrayLiteral
-extension Spark.Headers: ExpressibleByArrayLiteral {
+// MARK: - Headers: ExpressibleByArrayLiteral
+extension Headers: ExpressibleByArrayLiteral {
 
-    public init(arrayLiteral elements: Spark.Header...) {
+    public init(arrayLiteral elements: Header...) {
         self.init(headers: elements)
     }
 }
 
-// MARK: - Spark.Headers: Sequence
-extension Spark.Headers: Sequence {
+// MARK: - Headers: Sequence
+extension Headers: Sequence {
 
-    public func makeIterator() -> IndexingIterator<[Spark.Header]> {
+    public func makeIterator() -> IndexingIterator<[Header]> {
         headers.makeIterator()
     }
 }
 
-// MARK: - [Spark.Header]
-extension [Spark.Header] {
+// MARK: - [Header]
+extension [Header] {
 
     /// Get firstIndex
     /// - Parameter name: name

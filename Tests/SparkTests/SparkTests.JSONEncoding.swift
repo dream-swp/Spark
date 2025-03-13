@@ -11,8 +11,8 @@ import XCTest
 
 final class SparkTestsJSONEncoding: SparkTests {
 
-    private let encoding = Spark.JSONEncoding.default
-    private var urlRequest: URLRequest { sk.defaultRequest }
+    private let encoding = JSONEncoding.default
+    private var urlRequest: URLRequest {  try! .init(url: "wwww.test.com", method: .post) }
 
     func test_JSONEncoding_EncodeNilParameters() throws {
 
@@ -44,7 +44,7 @@ final class SparkTestsJSONEncoding: SparkTests {
         XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
         XCTAssertNotNil(request.httpBody)
 
-        XCTAssertEqual(try request.httpBody?.sk.JSONObject() as? NSObject, parameters as NSObject, "Decoded request body and parameters should be equal.")
+        XCTAssertEqual(request.httpBody?.sk.jsonObject as? NSObject, parameters as NSObject, "Decoded request body and parameters should be equal.")
     }
 
     func test_JSONEncoding_EncodeArray() throws {
@@ -59,19 +59,14 @@ final class SparkTestsJSONEncoding: SparkTests {
         XCTAssertNotNil(request.value(forHTTPHeaderField: "Content-Type"))
         XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
         XCTAssertNotNil(request.httpBody)
-        XCTAssertEqual(try request.httpBody?.sk.JSONObject() as? NSObject, array as NSObject, "Decoded request body and parameters should be equal.")
+        XCTAssertEqual(request.httpBody?.sk.jsonObject as? NSObject, array as NSObject, "Decoded request body and parameters should be equal.")
     }
 
     func test_JSONEncoding_ParametersRetainsCustomContentType() throws {
 
         // Given
-        var config = SKRequest()
-        config.scheme = .https
-        config.host = .custom("wwww.spark.test.com")
-        config.headers = [.contentType("application/custom-json-type+json")]
-        config.method = .get
-        let request = try config.skURLRequest()
-
+        var request: URLRequest = try .init(url: "wwww.test.com", method: .get)
+        request.headers = [.contentType("application/custom-json-type+json")]
         let parameters = ["key": "value"]
 
         // When
@@ -140,7 +135,7 @@ final class SparkTestsJSONEncoding: SparkTests {
     func test_JSONEncoding_requestConfig_HeadersParameters() throws {
 
         // Given
-        let parameters = Spark.Headers(headers: [.accept("accept"), .contentType("application/json"), .authorization(bearerToken: "bearerToken")])
+        let parameters = Headers(headers: [.accept("accept"), .contentType("application/json"), .authorization(bearerToken: "bearerToken")])
         let jsonData = try encoding.jsonData(parameters.dictionary)
         var mutableURLRequest = urlRequest
         mutableURLRequest.headers = parameters
@@ -155,8 +150,8 @@ final class SparkTestsJSONEncoding: SparkTests {
     func test_JSONEncoding_encode() throws {
 
         // Given
-        let encoding = Spark.JSONEncoding.prettyPrinted
-        let parameters: Spark.Parameters = [
+        let encoding = JSONEncoding.prettyPrinted
+        let parameters: Parameters = [
             "accept": "string",
             "array": ["a", "b", "c"],
             "dictionary": ["a": "1", "b": "2", "c": "3"],
@@ -171,7 +166,7 @@ final class SparkTestsJSONEncoding: SparkTests {
         XCTAssertEqual(result.value(forHTTPHeaderField: "Content-Type"), "application/json")
         XCTAssertNotNil(result.httpBody)
 
-        XCTAssertEqual(try result.httpBody?.sk.JSONObject() as? NSObject, parameters as NSObject, "Decoded request body and parameters should be equal.")
+        XCTAssertEqual(result.httpBody?.sk.jsonObject as? NSObject, parameters as NSObject, "Decoded request body and parameters should be equal.")
 
     }
 

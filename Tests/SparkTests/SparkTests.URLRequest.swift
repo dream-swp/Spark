@@ -11,13 +11,13 @@ import XCTest
 
 final class SparkTestsURLRequest: SparkTests {
 
-    private let url = "https://wwww.spark.test.com"
+    private let url = "https://wwww.test.com"
 
-    private func url(_ url: String) throws -> Spark.URLConvert {
+    private func url(_ url: String) throws -> URLConvert {
         try URL(string: url)!.skURL()
     }
 
-    private func urlComponents(_ url: String) throws -> Spark.URLConvert {
+    private func urlComponents(_ url: String) throws -> URLConvert {
         try URLComponents(string: url)!.skURL()
     }
 
@@ -27,7 +27,7 @@ final class SparkTestsURLRequest: SparkTests {
         let urlRequest = try URLRequest(url: url, method: .get, headers: [.accept("accept"), .userAgent("userAgent")])
 
         // Then
-        XCTAssertEqual(urlRequest.httpMethod, Spark.Method.get.rawValue)
+        XCTAssertEqual(urlRequest.httpMethod, Method.get.rawValue)
     }
 
     func test_error_URLRequest_get2() throws {
@@ -46,11 +46,11 @@ final class SparkTestsURLRequest: SparkTests {
     func test_error_URLRequest_post1() throws {
 
         // Given, When
-        let header: Spark.Headers = [.accept("accept"), .userAgent("userAgent")]
+        let header: Headers = [.accept("accept"), .userAgent("userAgent")]
         let urlRequest = try URLRequest(url: url(url), method: .post, headers: header)
 
         // Then
-        XCTAssertEqual(urlRequest.httpMethod, Spark.Method.post.rawValue)
+        XCTAssertEqual(urlRequest.httpMethod, Method.post.rawValue)
         XCTAssertEqual(urlRequest.allHTTPHeaderFields, header.dictionary)
     }
 

@@ -14,7 +14,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Header_subscript_name1() {
 
         // Given
-        var headers = Spark.Headers()
+        var headers = Headers()
 
         // When
         headers["Accept"] = nil
@@ -26,7 +26,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Header_subscript_name2() {
 
         // Given
-        var headers = Spark.Headers()
+        var headers = Headers()
 
         // When
         headers["Accept"] = "Accept"
@@ -38,7 +38,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Header_subscript_key1() {
 
         // Given
-        var headers = Spark.Headers()
+        var headers = Headers()
 
         // When
         headers[.Accept] = nil
@@ -50,7 +50,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Header_subscript_key2() {
 
         // Given
-        var headers = Spark.Headers()
+        var headers = Headers()
 
         // When
         headers[.Accept] = "Accept"
@@ -62,7 +62,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Headers_add_name() {
 
         // Given
-        var headers = Spark.Headers()
+        var headers = Headers()
 
         // When
         headers.add(name: "Accept", value: "Accept")
@@ -75,7 +75,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Headers_add_key() {
 
         // Given
-        var headers = Spark.Headers()
+        var headers = Headers()
 
         // When
         headers.add(key: .Accept, value: "Accept")
@@ -87,7 +87,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Headers_update_name() {
 
         // Given
-        var headers = Spark.Headers()
+        var headers = Headers()
 
         // When
         headers.update(name: "Accept", value: "Accept")
@@ -100,7 +100,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Headers_update_key() {
 
         // Given
-        var headers = Spark.Headers([.Accept: "Accept"])
+        var headers = Headers([.Accept: "Accept"])
 
         // When
         headers.update(key: .Accept, value: "update: accept")
@@ -111,7 +111,7 @@ final class SparkTestsHeaders: SparkTests {
 
     func test_Headers_remove_name() {
         // Given
-        var headers = Spark.Headers(["Accept": "Accept"])
+        var headers = Headers(["Accept": "Accept"])
 
         // When
         headers.remove(name: "Accept")
@@ -123,7 +123,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Headers_remove_key() {
 
         // Given
-        var headers = Spark.Headers([.Accept: "Accept"])
+        var headers = Headers([.Accept: "Accept"])
 
         // When
         headers.remove(key: .Accept)
@@ -136,7 +136,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Headers_sort() {
 
         // Given
-        let headers = Spark.Headers([.Basic: "Basic", .Accept: "Accept", .UserAgent: "UserAgent", .ContentType: "ContentType"])
+        let headers = Headers([.Basic: "Basic", .Accept: "Accept", .UserAgent: "UserAgent", .ContentType: "ContentType"])
 
         // When
         let sorted = headers.sorted()
@@ -151,7 +151,7 @@ final class SparkTestsHeaders: SparkTests {
         let dictionary = ["Accept": "Accept", "Basic": "Basic", "ContentType": "ContentType"]
 
         // When
-        let headers = Spark.Headers(dictionary)
+        let headers = Headers(dictionary)
 
         // Then
         XCTAssertEqual(dictionary, headers.dictionary)
@@ -163,7 +163,7 @@ final class SparkTestsHeaders: SparkTests {
         let dictionary = ["ContentType": "ContentType", "Basic": "Basic", "Accept": "Accept", "User-Agent": "User-Agent"]
 
         // When
-        let headers = Spark.Headers(dictionary).sorted()
+        let headers = Headers(dictionary).sorted()
 
         // Then
         XCTAssertEqual(headers[headers.startIndex].name, "Accept")
@@ -175,7 +175,7 @@ final class SparkTestsHeaders: SparkTests {
         let dictionary = ["Basic": "Basic", "Accept": "Accept", "User-Agent": "User-Agent", "ContentType": "ContentType"]
 
         // When
-        let headers = Spark.Headers(dictionary).sorted()
+        let headers = Headers(dictionary).sorted()
 
         // Then
         let lastIndex = headers.index(before: headers.endIndex)
@@ -186,7 +186,7 @@ final class SparkTestsHeaders: SparkTests {
 
         // Given
         let dictionary = ["Basic": "Basic", "Accept": "Accept", "User-Agent": "User-Agent", "ContentType": "ContentType"]
-        let headers = Spark.Headers(dictionary).sorted()
+        let headers = Headers(dictionary).sorted()
 
         // When
         let index = headers.index(after: headers.startIndex)
@@ -198,7 +198,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Headers_arrayLiteral() {
 
         // Given, When
-        let headers = Spark.Headers(arrayLiteral: Spark.Header(key: .Accept, value: ""), Spark.Header(name: "Basic", value: "Basic"))
+        let headers = Headers(arrayLiteral: Header(key: .Accept, value: ""), Header(name: "Basic", value: "Basic"))
 
         // Then
         XCTAssertFalse(headers.isEmpty)
@@ -207,7 +207,7 @@ final class SparkTestsHeaders: SparkTests {
     func test_Headers_dictionaryLiteral() {
 
         // Given, When
-        let headers = Spark.Headers(dictionaryLiteral: ("Basic", "Basic"), (Spark.Header.Key.Accept.rawValue, "Accept"))
+        let headers = Headers(dictionaryLiteral: ("Basic", "Basic"), (Header.Key.Accept.rawValue, "Accept"))
 
         // Then
         XCTAssertFalse(headers.isEmpty)
@@ -218,7 +218,7 @@ final class SparkTestsHeaders: SparkTests {
 
         // Given
         let dictionary = ["Accept": "Accept", "Basic": "Basic", "ContentType": "ContentType"]
-        let headers = Spark.Headers(dictionary)
+        let headers = Headers(dictionary)
 
         // When
         var iterator = headers.makeIterator()
@@ -232,4 +232,3 @@ final class SparkTestsHeaders: SparkTests {
     }
 
 }
-

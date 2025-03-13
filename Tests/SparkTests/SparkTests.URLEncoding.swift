@@ -11,8 +11,8 @@ import XCTest
 
 final class SparkTestsURLEncoding: SparkTests {
 
-    private let encoding = Spark.URLEncoding.default
-    private var urlRequest: URLRequest { sk.defaultRequest }
+    private let encoding = URLEncoding.default
+    private var urlRequest: URLRequest {  try! .init(url: "wwww.test.com", method: .get) }
 
     func test_URLEncodeing_ParametersNil() throws {
 
@@ -140,7 +140,7 @@ final class SparkTestsURLEncoding: SparkTests {
 
     func test_URLEncodeing_ArrayNestedDictionary_ValueParameter_indexInBrackets() throws {
         // Given
-        let encoding = Spark.URLEncoding(arrayEncoding: .indexInBrackets)
+        let encoding = URLEncoding(arrayEncoding: .indexInBrackets)
         let parameters = ["key": ["value1", 1, true, ["key1": 2], ["key2": 3], ["key3": ["key4": 3]]]]
 
         // When
@@ -152,7 +152,7 @@ final class SparkTestsURLEncoding: SparkTests {
 
     func test_URLEncodeing_KeyStringArray_Value_Parameter_noBrackets() throws {
         // Given
-        let encoding = Spark.URLEncoding(arrayEncoding: .noBrackets)
+        let encoding = URLEncoding(arrayEncoding: .noBrackets)
         let parameters = ["key": ["value", 1, true]]
 
         // When
@@ -164,7 +164,7 @@ final class SparkTestsURLEncoding: SparkTests {
 
     func test_URLEncodeing_KeyStringArray_Value_Parameter_CustomClosure() throws {
         // Given
-        let encoding = Spark.URLEncoding(
+        let encoding = URLEncoding(
             arrayEncoding: .custom { key, index in
                 "\(key)_\(index + 1)"
             })
@@ -213,7 +213,7 @@ final class SparkTestsURLEncoding: SparkTests {
 
     func test_URLEncodeing_KeyStringNestedDictionaryArray_ValueParameterWithoutBrackets() throws {
         // Given
-        let encoding = Spark.URLEncoding(arrayEncoding: .noBrackets)
+        let encoding = URLEncoding(arrayEncoding: .noBrackets)
         let parameters = ["key1": ["key2": ["key3": ["value", 1, true]]]]
 
         // When
@@ -226,7 +226,7 @@ final class SparkTestsURLEncoding: SparkTests {
 
     func test_URLEncodeing_LiteralBoolEncodingWorksAndDoesNotAffectNumbers() throws {
         // Given
-        let encoding = Spark.URLEncoding(boolEncoding: .literal)
+        let encoding = URLEncoding(boolEncoding: .literal)
         let parameters: [String: Any] = [  // Must still encode to numbers
             "key01": 1,
             "key02": 0,
@@ -301,7 +301,7 @@ final class SparkTestsURLEncoding: SparkTests {
     func test_URLEncodeing_EncodesGETParametersInURL() throws {
         // Given
         var mutableURLRequest = urlRequest
-        mutableURLRequest.httpMethod = Spark.Method.get.rawValue
+        mutableURLRequest.httpMethod = Method.get.rawValue
         let parameters = ["key1": 1, "key2": 2]
 
         // When
@@ -316,7 +316,7 @@ final class SparkTestsURLEncoding: SparkTests {
     func test_URLEncodeing_EncodesPOSTParametersInHTTPBody() throws {
         // Given
         var mutableURLRequest = urlRequest
-        mutableURLRequest.httpMethod = Spark.Method.post.rawValue
+        mutableURLRequest.httpMethod = Method.post.rawValue
         let parameters = ["key1": 1, "key2": 2]
 
         // When
@@ -332,11 +332,11 @@ final class SparkTestsURLEncoding: SparkTests {
     func test_URLEncodeing_InURLParameterEncodingEncodesPOSTParametersInURL() throws {
         // Given
         var mutableURLRequest = urlRequest
-        mutableURLRequest.httpMethod = Spark.Method.post.rawValue
+        mutableURLRequest.httpMethod = Method.post.rawValue
         let parameters = ["key1": 1, "key2": 2]
 
         // When
-        let urlRequest = try Spark.URLEncoding.queryString.encode(mutableURLRequest, with: parameters)
+        let urlRequest = try URLEncoding.queryString.encode(mutableURLRequest, with: parameters)
 
         // Then
         XCTAssertEqual(urlRequest.url?.query, "key1=1&key2=2")

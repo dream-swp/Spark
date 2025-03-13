@@ -8,30 +8,32 @@
 import Combine
 import Foundation
 
-extension Spark {
+// MARK: - Token
+/// Combine Token
+public class Token {
 
-    public class Token {
+    /// AnyCancellable
+    fileprivate var cancellable: AnyCancellable? = nil
 
-        /// AnyCancellable
-        fileprivate var cancellable: AnyCancellable? = nil
+    /// Remove token
+    public func unseal() { cancellable = nil }
 
-        /// Remove token
-        public func unseal() { cancellable = nil }
-
-        public init(cancellable: AnyCancellable? = nil) {
-            self.cancellable = cancellable
-        }
+    /// `Token` Initialization method
+    public init(cancellable: AnyCancellable? = nil) {
+        self.cancellable = cancellable
     }
-
 }
 
 extension SK where SK: AnyCancellable {
 
-    public func seal(_ token: Spark.Token) {
+    /// Add token
+    /// - Parameter token: token
+    public func seal(_ token: Token) {
         token.cancellable = sk
     }
 }
 
+// MARK: - JSONDecoder Extension
 extension SK where SK == JSONDecoder {
 
     /// JSON Decoder
@@ -42,6 +44,7 @@ extension SK where SK == JSONDecoder {
     }
 }
 
+// MARK: - JSONEncoder Extension
 extension SK where SK == JSONEncoder {
 
     /// JSON Encoder
@@ -52,3 +55,28 @@ extension SK where SK == JSONEncoder {
     }
 }
 
+// MARK: - Data Extension
+extension SK where SK == Data {
+
+    /// Data Convert to String
+    public var string: String {
+        String(data: sk, encoding: .utf8) ?? ""
+    }
+
+    /// Data Convert to String
+    /// - Parameter encoding: String.Encoding
+    /// - Returns: String
+    public func string(_ encoding: String.Encoding) -> String {
+        String(data: sk, encoding: encoding) ?? ""
+    }
+    
+    public var jsonObject: Any? {
+        try? JSONSerialization.jsonObject(with: sk, options: .allowFragments)
+    }
+    
+//    func JSONObject() throws -> Any {
+//        try JSONSerialization.jsonObject(with: sk, options: .allowFragments)
+//    }
+
+}
+// MARK: -

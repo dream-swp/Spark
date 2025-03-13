@@ -17,7 +17,7 @@ extension SparkTestsHeaderContentType {
     func test_HeaderContentType_text_plain() {
 
         // Given, When
-        let header = Spark.Header.contentType(.text(.plain))
+        let header = Header.contentType(.text(.plain))
 
         // Then
         XCTAssertEqual(header.value, "text/plain")
@@ -26,7 +26,7 @@ extension SparkTestsHeaderContentType {
     func test_HeaderContentType_text_html() {
 
         // Given, When
-        let header = Spark.Header.contentType(.text(.html))
+        let header = Header.contentType(.text(.html))
 
         // Then
         XCTAssertEqual(header.value, "text/html")
@@ -35,7 +35,7 @@ extension SparkTestsHeaderContentType {
     func test_HeaderContentType_text_css() {
 
         // Given, When
-        let header = Spark.Header.contentType(.text(.css))
+        let header = Header.contentType(.text(.css))
 
         // Then
         XCTAssertEqual(header.value, "text/css")
@@ -44,7 +44,7 @@ extension SparkTestsHeaderContentType {
     func test_HeaderContentType_text_javascript() {
 
         // Given, When
-        let header = Spark.Header.contentType(.text(.javascript))
+        let header = Header.contentType(.text(.javascript))
 
         // Then
         XCTAssertEqual(header.value, "text/javascript")
@@ -53,7 +53,7 @@ extension SparkTestsHeaderContentType {
     func test_HeaderContentType_text_xml() {
 
         // Given, When
-        let header = Spark.Header.contentType(.text(.xml))
+        let header = Header.contentType(.text(.xml))
 
         // Then
         XCTAssertEqual(header.value, "text/xml")
@@ -65,7 +65,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_image_jpeg() {
         // Given, When
-        let header = Spark.Header.contentType(.image(.jpeg))
+        let header = Header.contentType(.image(.jpeg))
 
         // Then
         XCTAssertEqual(header.value, "image/jpeg")
@@ -73,7 +73,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_image_gif() {
         // Given, When
-        let header = Spark.Header.contentType(.image(.gif))
+        let header = Header.contentType(.image(.gif))
 
         // Then
         XCTAssertEqual(header.value, "image/gif")
@@ -81,7 +81,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_image_png() {
         // Given, When
-        let header = Spark.Header.contentType(.image(.png))
+        let header = Header.contentType(.image(.png))
 
         // Then
         XCTAssertEqual(header.value, "image/png")
@@ -93,7 +93,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_audio_mpeg() {
         // Given, When
-        let header = Spark.Header.contentType(.audio(.mpeg))
+        let header = Header.contentType(.audio(.mpeg))
 
         // Then
         XCTAssertEqual(header.value, "audio/mpeg")
@@ -105,7 +105,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_video_mp4() {
         // Given, When
-        let header = Spark.Header.contentType(.video(.mp4))
+        let header = Header.contentType(.video(.mp4))
 
         // Then
         XCTAssertEqual(header.value, "video/mp4")
@@ -117,7 +117,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_application_json() {
         // Given, When
-        let header = Spark.Header.contentType(.application(.json))
+        let header = Header.contentType(.application(.json))
 
         // Then
         XCTAssertEqual(header.value, "application/json")
@@ -125,7 +125,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_application_xml() {
         // Given, When
-        let header = Spark.Header.contentType(.application(.xml))
+        let header = Header.contentType(.application(.xml))
 
         // Then
         XCTAssertEqual(header.value, "application/xml")
@@ -133,7 +133,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_application_pdf() {
         // Given, When
-        let header = Spark.Header.contentType(.application(.pdf))
+        let header = Header.contentType(.application(.pdf))
 
         // Then
         XCTAssertEqual(header.value, "application/pdf")
@@ -141,7 +141,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_application_msword() {
         // Given, When
-        let header = Spark.Header.contentType(.application(.msword))
+        let header = Header.contentType(.application(.msword))
 
         // Then
         XCTAssertEqual(header.value, "application/msword")
@@ -149,7 +149,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_application_octet_stream() {
         // Given, When
-        let header = Spark.Header.contentType(.application(.octetStream))
+        let header = Header.contentType(.application(.octetStream))
 
         // Then
         XCTAssertEqual(header.value, "application/octet-stream")
@@ -161,7 +161,7 @@ extension SparkTestsHeaderContentType {
 
     func test_HeaderContentType_multipart_form_data() {
         // Given, When
-        let header = Spark.Header.contentType(.multipart(.formData))
+        let header = Header.contentType(.multipart(.formData))
 
         // Then
         XCTAssertEqual(header.value, "multipart/form-data")
