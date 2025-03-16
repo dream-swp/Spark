@@ -7,24 +7,62 @@
 
 import Foundation
 
-// MARK: - Convertible
-
-/// Convertible
-public protocol Convertible: URLRequestConvert, Sendable, AnyObject {
-
-    associatedtype Model: Codable
+// MARK: - ConvertibleConvenience
+public protocol ConvertibleConvenience: Sendable {
+    
     typealias Convert = (_ convert: () -> any URLConvert) -> Self
     
-    var convert: any URLConvert { get set }
-    var method: Method { get set }
-    var encoding: any ParameterEncoding { get set }
-    var parameters: Parameters? { get set }
-    var headers: Headers? { get set }
-    var requestModifier: RequestModifier? { get set }
-    var decoder: JSONDecoder { get set }
-    var model: Model.Type { get }
-    static var post: Convert { get }
+    /// convenience, init
+    /// - Parameters:
+    ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:     `Method` for the `URLRequest`. `.get` by default.
+    ///   - encoding:   `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest
+    init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding)
+    
+}
 
+extension ConvertibleConvenience {
+    
+    /// convenience: GET Request
+    public static var get: Convert {
+        return {  self.init(convert: $0(), method: .get, encoding: URLEncoding.default)  }
+    }
+    
+    /// convenience: POST Request
+    public static var post: Convert {
+        return {  self.init(convert: $0(), method: .post, encoding: JSONEncoding.default)  }
+    }
+}
+
+// MARK: - Convertible
+/// Convertible
+public protocol Convertible: URLRequestConvert, Sendable, AnyObject {
+    
+    associatedtype Model: Codable
+   
+    ///  `URLConvert` value to be used as the `URLRequest`'s `URL`.
+    var convert: any URLConvert { get set }
+    
+    ///  method: `Method` for the `URLRequest`.
+    var method: Method { get set }
+    
+    /// encoding: `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`, `URLEncoding.default` by default.
+    var encoding: any ParameterEncoding { get set }
+    
+    /// parameters: `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
+    var parameters: Parameters? { get set }
+    
+    /// headers: `Headers` value to be added to the `URLRequest`. `nil` by default.
+    var headers: Headers? { get set }
+    
+    /// requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from
+    var requestModifier: RequestModifier? { get set }
+    
+    /// decoder: `JSONDecoder`, Model JSON parsing format
+    var decoder: JSONDecoder { get set }
+    
+    /// model: `Model` Convert to model data
+    var model: Model.Type { get }
 }
 
 // MARK: - Convertible: URLRequestConvert
@@ -94,45 +132,116 @@ extension Convertible {
     }
 
     /// Update model
-    /// - Parameter model: model
+    /// - Parameter decoder: decoder
     /// - Returns: the current calling object
-
     @discardableResult
     public func decoder(_ decoder: JSONDecoder) -> Self {
         self.decoder = decoder
         return self
     }
-
+    
 }
 
-extension Convertible {
-
-}
 
 // MARK: - RequestConvertible
-public class RequestConvertible: Convertible, @unchecked Sendable {
-   
-
-    public typealias Item = RequestConvertible
-
+public class RequestConvertible: Convertible, ConvertibleConvenience, @unchecked Sendable {
+    
     public typealias Model = Data
-
-    public var model: Data.Type { Data.self }
-
+    
+    ///  `URLConvert` value to be used as the `URLRequest`'s `URL`.
     public var convert: any URLConvert
 
+    ///  method: `Method` for the `URLRequest`.
     public var method: Method
 
+    /// encoding: `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`
     public var encoding: any ParameterEncoding
 
+    /// parameters: `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
     public var parameters: Parameters?
 
+    /// headers: `Headers` value to be added to the `URLRequest`. `nil` by default.
     public var headers: Headers?
 
+    /// requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from
     public var requestModifier: RequestModifier?
 
+    /// decoder: `JSONDecoder`, Model JSON parsing format
     public var decoder: JSONDecoder = JSONDecoder.sk.decoder
+    
+    /// model: `Model` Convert to model data
+    public var model: Data.Type { Data.self }
 
+    /// Creates a `Request` from a `URLRequest` created using the passed components, `Encodable` parameters
+    /// - Parameters:
+    ///   - convert:            `URLConvert` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:             `Method` for the `URLRequest`. `.get` by default.
+    ///   - encoding:           `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`
+    ///   - parameters:         `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
+    ///   - headers:            `Headers` value to be added to the `URLRequest`. `nil` by default.
+    ///   - requestModifier:    `RequestModifier` which will be applied to the `URLRequest` created from
+    ///   - decoder:            `JSONDecoder`, Model JSON parsing format
+    public init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil) {
+        self.convert = convert
+        self.method = method
+        self.encoding = encoding
+        self.parameters = parameters
+        self.headers = headers
+        self.requestModifier = requestModifier
+    }
+    
+    /// convenience, init.RequestConvertible
+    /// - Parameters:
+    ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:     `Method` for the `URLRequest`. `.get` by default.
+    ///   - encoding:   `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest
+    public required convenience init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding) {
+        self.init(convert: convert, method: method, encoding: encoding, parameters: nil, headers: nil, requestModifier: nil)
+    }
+}
+
+
+// MARK: - RequestConvertibleModel
+public class RequestConvertibleModel<Item: Codable>: Convertible, ConvertibleConvenience, @unchecked Sendable {
+  
+    public typealias Model = Item
+
+    ///  `URLConvert` value to be used as the `URLRequest`'s `URL`.
+    public var convert: any URLConvert
+
+    ///  method: `Method` for the `URLRequest`.
+    public var method: Method
+
+    /// encoding: `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`
+    public var encoding: any ParameterEncoding
+
+    /// parameters: `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
+    public var parameters: Parameters?
+
+    /// headers: `Headers` value to be added to the `URLRequest`. `nil` by default.
+    public var headers: Headers?
+
+    /// requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from
+    public var requestModifier: RequestModifier?
+
+    /// decoder: `JSONDecoder`, Model JSON parsing format
+    public var decoder: JSONDecoder = JSONDecoder.sk.decoder
+    
+    /// model: `Model` Convert to model data
+    public var model: Item.Type {
+        Item.self
+    }
+
+    /// Creates a `Request` from a `URLRequest` created using the passed components, `Encodable` parameters
+    /// - Parameters:
+    ///   - convert:            `URLConvert` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:             `Method` for the `URLRequest`. `.get` by default.
+    ///   - encoding:           `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`
+    ///   - parameters:         `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
+    ///   - headers:            `Headers` value to be added to the `URLRequest`. `nil` by default.
+    ///   - requestModifier:    `RequestModifier` which will be applied to the `URLRequest` created from
+    ///   - model:              `Model` Convert to model data
+    ///   - decoder:            `JSONDecoder`, Model JSON parsing format
     public init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil, decoder: JSONDecoder = JSONDecoder.sk.decoder) {
         self.convert = convert
         self.method = method
@@ -143,46 +252,15 @@ public class RequestConvertible: Convertible, @unchecked Sendable {
         self.decoder = decoder
     }
     
-    public static var post: Convert {
-        return { .init(convert: $0(), method: .post, encoding: URLEncoding.default) }
+    /// convenience, init.RequestConvertibleModel<Model>
+    /// - Parameters:
+    ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:     `Method` for the `URLRequest`. `.get` by default.
+    ///   - encoding:   `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest
+    public required convenience init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding) {
+        self.init(convert: convert, method: method, encoding: encoding, parameters: nil, headers: nil, requestModifier: nil, decoder: JSONDecoder.sk.decoder)
     }
+    
 }
-
-
-// MARK: - RequestConvertibleModel
-public class RequestConvertibleModel<Item: Codable>: Convertible, @unchecked Sendable {
-
-    public typealias Model = Item
-
-    public var model: Item.Type {
-        Item.self
-    }
-
-    public var convert: any URLConvert
-
-    public var method: Method
-
-    public var encoding: any ParameterEncoding
-
-    public var parameters: Parameters?
-
-    public var headers: Headers?
-
-    public var requestModifier: RequestModifier?
-
-    public var decoder: JSONDecoder
-
-    public init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil, decoder: JSONDecoder = JSONDecoder.sk.decoder) {
-        self.convert = convert
-        self.method = method
-        self.encoding = encoding
-        self.parameters = parameters
-        self.headers = headers
-        self.requestModifier = requestModifier
-        self.decoder = decoder
-    }
-
-}
-
 
 // MARK: -

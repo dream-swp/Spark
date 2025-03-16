@@ -1,5 +1,5 @@
 //
-//  Spark+Header.swift
+//  SparkTests.GET.Request.swift
 //  Spark
 //
 //  Created by Dream on 2025/2/24.
@@ -9,7 +9,7 @@ import XCTest
 
 @testable import Spark
 
-final class SparkTestsGet: SparkTests {
+final class SparkTestsGETRequest: SparkTests {
 
     private let sk = Spark.default
 
@@ -112,145 +112,109 @@ final class SparkTestsGet: SparkTests {
 
         // Given, When
         let token: Token = .init()
-        
-        // When
-//        let convertible: RequestConvertible = .init(convert: SchemeGet.sexy, method: .get, encoding: URLEncoding.default).parameters(parameters).headers(headers)
 
         // Then
-
-        //        sk.get(convert: SchemeGet.sexy, parameters: parameters, headers: headers)
-        //            .receive(on: DispatchQueue.main)
-        //            .sink { complete in
-        //                if case .failure(let error) = complete {
-        //                    print(error.localizedDescription)
-        //                }
-        //                token.unseal()
-        //            } receiveValue: { data in
-        //                print("\r\(#function) -> \(SchemeGet.sexy.rawValue) : ")
-        //                print(data.sk.string)
-        //                XCTAssertNotNil(data)
-        //            }.sk.seal(token)
+        sk.get(SchemeGet.sexy, parameters: parameters, headers: headers)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                    XCTAssertThrowsError(error)
+                }
+                token.unseal()
+            } receiveValue: { data in
+                print("\r\(#function) -> \(SchemeGet.sexy.rawValue) : ")
+                print(data.sk.string)
+                XCTAssertNotNil(data)
+            }.sk.seal(token)
 
     }
 
     func test_get2() throws {
 
-        //        // Given, When
-        //        let token: Token = .init()
-        //        let request: RequestConvert = .get { SchemeGet.love }.parameters(parameters).headers(headers)
-        //
-        //        // Then
-        //        sk.get(request)
-        //            .receive(on: DispatchQueue.main)
-        //            .sink { complete in
-        //                if case .failure(let error) = complete {
-        //                    print(error.localizedDescription)
-        //                }
-        //                token.unseal()
-        //            } receiveValue: { data in
-        //                print("\r\(#function) -> \(SchemeGet.love.rawValue) : ")
-        //                print(data.sk.string)
-        //                XCTAssertNotNil(data)
-        //            }.sk.seal(token)
+        // Given, When
+        let token: Token = .init()
+        let convertible: RequestConvertible = .get { SchemeGet.love }.parameters(parameters).headers(headers)
+
+        // Then
+        sk.get(in: convertible)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                }
+                token.unseal()
+            } receiveValue: { data in
+                print("\r\(#function) -> \(SchemeGet.love.rawValue) : ")
+                print(data.sk.string)
+                XCTAssertNotNil(data)
+            }.sk.seal(token)
     }
 
     func test_get3() throws {
 
-        //        // Given, When
-        //        let token: Token = .init()
-        //
-        //        // Then
-        //        sk.get(convert: SchemeGet.joke, parameters: parameters, headers: headers, model: Model3.self)
-        //            .receive(on: DispatchQueue.main)
-        //            .sink { complete in
-        //                if case .failure(let error) = complete {
-        //                    print(error.localizedDescription)
-        //                }
-        //                token.unseal()
-        //            } receiveValue: { model in
-        //                print("\r\(#function) -> \(SchemeGet.love.rawValue) : ")
-        //                print(model)
-        //                XCTAssertNotNil(model)
-        //            }.sk.seal(token)
+        // Given, When
+        let token: Token = .init()
+
+        // Then
+        sk.get(SchemeGet.joke, parameters: parameters, headers: headers, model: Model3.self)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                    XCTAssertThrowsError(error)
+                }
+                token.unseal()
+            } receiveValue: { model in
+                print("\r\(#function) -> \(SchemeGet.joke.rawValue) : ")
+                print(model)
+                XCTAssertNotNil(model)
+            }.sk.seal(token)
     }
 
     func test_get4() throws {
 
-        //        // Given, When
-        //        let token: Token = .init()
-        //        let request: RequestConvert = .get { SchemeGet.dog }.parameters(parameters).headers(headers)
-        //
-        //        // Then
-        //        sk.get(request, model: Model2.self)
-        //            .sink { complete in
-        //                if case .failure(let error) = complete {
-        //                    print(error.localizedDescription)
-        //                }
-        //                token.unseal()
-        //            } receiveValue: { model in
-        //                print("\r\(#function) -> \(SchemeGet.dog.rawValue) : ")
-        //                print(model)
-        //                XCTAssertNotNil(model)
-        //            }.sk.seal(token)
+        // Given, When
+        let token: Token = .init()
+        let convertible: RequestConvertibleModel<Model2> = .get { SchemeGet.dog }.parameters(parameters).headers(headers)
+
+        // Then
+        sk.get(at: convertible)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                    XCTAssertThrowsError(error)
+                }
+                token.unseal()
+            } receiveValue: { model in
+                print("\r\(#function) -> \(SchemeGet.dog.rawValue) : ")
+                print(model)
+                XCTAssertNotNil(model)
+            }.sk.seal(token)
 
     }
 
     func test_request_error() throws {
 
         // Given, When
-        //        let token: Token = .init()
-        //        let request: RequestConvert = .get { "" }.parameters(parameters).headers(headers)
-        //
-        //        // Then
-        //        sk.get(request).sink { complete in
-        //            if case .failure(let error) = complete {
-        //                print(error.localizedDescription)
-        //                XCTAssertNotNil(error)
-        //                XCTAssertEqual((error as? Error)?.localizedDescription, Error.urlError.localizedDescription)
-        //                print("\r\(#function) -> \(error.localizedDescription) : ")
-        //            }
-        //            token.unseal()
-        //        } receiveValue: { model in
-        //            print(model)
-        //            XCTAssertNotNil(model)
-        //        }.sk.seal(token)
-
-        //        let a =  RequestConvertible.init(convert: "", method: .get, encoding: JSONEncoding.default, decoder: JSONDecoder.sk.decoder)
-        //        a.model() { Model1.self }.
-        //        sk.request(a)
-
+        let token: Token = .init()
+        let convertible: RequestConvertible = .get { "" }.parameters(parameters).headers(headers)
+        
+        // Then
+        sk.get(in: convertible)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                    XCTAssertNotNil(error)
+                    XCTAssertEqual((error as? Error)?.localizedDescription, Error.urlError.localizedDescription)
+                    print("\r\(#function) -> \(error.localizedDescription) : ")
+                }
+                token.unseal()
+            } receiveValue: { model in
+                print(model)
+                XCTAssertNotNil(model)
+            }.sk.seal(token)
     }
-
-    //    func test_test() throws {
-    //        let token: Token = .init()
-    //        let request: RequestConvertible = .init(convert: "", method: .get, encoding: URLEncoding.default).convert(SchemeGet.rand).parameters(parameters).headers(headers)
-    //        sk.request(request)
-    //            .receive(on: DispatchQueue.main)
-    //            .sink { complete in
-    //                if case .failure(let error) = complete {
-    //                    print(error.localizedDescription)
-    //                }
-    //                token.unseal()
-    //            } receiveValue: { data in
-    //                print("\r\(#function) -> \(SchemeGet.rand.rawValue) : ")
-    //                print(data.sk.string)
-    //                XCTAssertNotNil(data)
-    //            }.sk.seal(token)
-    //
-    //        //                sk.request(convert: SchemeGet.rand, method: .get, encoding: URLEncoding.default, parameters: parameters, headers: headers)
-    //        //                    .receive(on: DispatchQueue.main)
-    //        //                    .sink { complete in
-    //        //                        if case .failure(let error) = complete {
-    //        //                            print(error.localizedDescription)
-    //        //                        }
-    //        //                        token.unseal()
-    //        //                    } receiveValue: { data in
-    //        //                        print("\r\(#function) -> \(SchemeGet.rand.rawValue) : ")
-    //        //                        print(data.sk.string)
-    //        //                        XCTAssertNotNil(data)
-    //        //                    }.sk.seal(token)
-    //
-    //    }
 
 }
 
@@ -350,6 +314,7 @@ extension SparkTests {
 
         var success: Bool
         var type: String
+        var data: Data
 
         struct Data: SparkTests.Data {
             var id: Int

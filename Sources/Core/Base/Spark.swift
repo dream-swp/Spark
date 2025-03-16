@@ -8,9 +8,6 @@
 import Combine
 import Foundation
 
-
-
-
 // Request Modifier
 public typealias RequestModifier = @Sendable (inout URLRequest) throws -> Void
 // Response Data
@@ -24,7 +21,6 @@ public struct Spark: @unchecked Sendable {
     public static let `default` = Spark()
 
     private init() {}
-
 }
 
 // MARK: - Spark Get Request
@@ -77,18 +73,6 @@ extension Spark {
 extension Spark {
 
     // TODO: - POST Request
-//    public func post(convert: any URLConvert, method: Method = .post, encoding: ParameterEncoding = JSONEncoding.default, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil) -> ResponseData {
-//        request(convert: convert, method: method, encoding: encoding, parameters: parameters, headers: headers, requestModifier: requestModifier)
-//    }
-//
-//    var post: ResponseData {
-//        return {
-//            var post: RequestConvert = .get { "" }
-//            post = $0(post)
-//            return self.request(post)
-//        }
-//    }
-
 }
 
 // MARK: - Spark Request
@@ -98,8 +82,7 @@ extension Spark {
     /// - Parameters:
     ///   - convert:            `URLConvert` value to be used as the `URLRequest`'s `URL`.
     ///   - method:             `Method` for the `URLRequest`. `.get` by default.
-    ///   - encoding:           `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`,
-    ///                         `URLEncoding.default` by default.
+    ///   - encoding:           `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`
     ///   - parameters:         `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
     ///   - headers:            `Headers` value to be added to the `URLRequest`. `nil` by default.
     ///   - requestModifier:    `RequestModifier` which will be applied to the `URLRequest` created from
@@ -126,8 +109,7 @@ extension Spark {
     /// - Parameters:
     ///   - convert:            `URLConvert` value to be used as the `URLRequest`'s `URL`.
     ///   - method:             `Method` for the `URLRequest`. `.get` by default.
-    ///   - encoding:           `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`,
-    ///                         `URLEncoding.default` by default.
+    ///   - encoding:           `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest
     ///   - parameters:         `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
     ///   - headers:            `Headers` value to be added to the `URLRequest`. `nil` by default.
     ///   - requestModifier:    `RequestModifier` which will be applied to the `URLRequest` created from
@@ -149,6 +131,9 @@ extension Spark {
 
 extension Spark {
     
+    /// Creates a `Request` from a `URLRequest` created using the passed components, `Convertible` parameters
+    /// - Parameter config:      `Convertible` Request parameter configuration
+    /// - Returns:              `ResponseData` Return request data
     internal func request<Request: Convertible>(_ request: Request) -> ResponseData {
         
         guard let urlRequest = request.urlRequest else {
