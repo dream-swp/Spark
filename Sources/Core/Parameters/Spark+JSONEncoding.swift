@@ -45,7 +45,7 @@ extension JSONEncoding: ParameterEncoding {
     /// - Returns: The encoding completed URLRequest
     public func encode(_ urlRequest: any URLRequestConvert, jsonObject: Any? = nil) throws -> URLRequest {
 
-        let urlRequest = try urlRequest.skURLRequest()
+        let urlRequest = try urlRequest.urlRequestConvert()
 
         guard let jsonObject = jsonObject else { return urlRequest }
 

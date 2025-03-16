@@ -146,7 +146,7 @@ extension URLEncoding: ParameterEncoding {
     /// - Throws:       Any `Error` produced during encoding.
     public func encode(_ urlRequest: any URLRequestConvert, with parameters: Parameters?) throws -> URLRequest {
 
-        var urlRequest = try urlRequest.skURLRequest()
+        var urlRequest = try urlRequest.urlRequestConvert()
 
         guard let parameters = parameters else { return urlRequest }
 

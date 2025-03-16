@@ -21,6 +21,8 @@ public enum Error: Swift.Error {
     /// `URLConvertible` type failed to create a valid `URL`.
     case invalidURL(url: any URLConvert)
     
+//    case dataConversion
+    
 }
 
 // MARK: - Error: Public
@@ -95,7 +97,7 @@ extension Error.ParameterEncodingFailureReason: LocalizedError {
 
 // MARK: - Error.JSONEncodingError
 extension Error {
-    public enum JSONEncodingError {
+    public enum JSONEncodingError: Sendable {
         case invalidJSONObject
     }
 }
@@ -109,4 +111,18 @@ extension Error.JSONEncodingError: LocalizedError {
         """
     }
 }
+
+extension Error {
+    
+    public enum ModelConvert:String, Sendable {
+    case empty
+    }
+    
+}
+
+extension Error.ModelConvert: LocalizedError {
+    
+    
+}
 // MARK: -
+

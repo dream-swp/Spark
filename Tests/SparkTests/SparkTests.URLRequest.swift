@@ -14,11 +14,11 @@ final class SparkTestsURLRequest: SparkTests {
     private let url = "https://wwww.test.com"
 
     private func url(_ url: String) throws -> URLConvert {
-        try URL(string: url)!.skURL()
+        try URL(string: url)!.urlConvert()
     }
 
     private func urlComponents(_ url: String) throws -> URLConvert {
-        try URLComponents(string: url)!.skURL()
+        try URLComponents(string: url)!.urlConvert()
     }
 
     func test_error_URLRequest_get1() throws {

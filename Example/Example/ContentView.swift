@@ -13,7 +13,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Button {
-                test()
+                test1()
             } label: {
                 Text("GET")
             }
@@ -24,52 +24,77 @@ struct ContentView: View {
 }
 
 extension ContentView {
+    
+    var parameters: [String: Any] { ["type": "json"] }
+    var headers: Headers { [.contentType(.application(.json))] }
     func test()  {
-        let token: Spark.Token = .init()
+        let token: Token = .init()
+        let request: RequestConvertible = .init(convert: "https://api.vvhan.com/api/ian/rand", method: .get, encoding: URLEncoding.default).parameters(parameters).headers(headers)
         
-        let parameters = ["type" : "json"]
-        Spark.default
-            .request(url: "https://api.vvhan.com/api/ian/rand",
-                     method: .get,
-                     encoding: URLEncoding.default,
-                     parameters: parameters,
-                     headers: [.contentType("application/json")])
+        
+        Spark.default.request(request)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
                     print(error.localizedDescription)
                 }
                 token.unseal()
-            } receiveValue: {  data in
-                print(String(data: data, encoding: .utf8)!)
+            } receiveValue: { data in
+                print(data.sk.string)
             }.sk.seal(token)
     }
     
     func test1()  {
         let token: Token = .init()
+//        let request: RequestConvertible = .init(convert: "https://api.vvhan.com/api/ian/rand", method: .get, encoding: URLEncoding.default).parameters(parameters).headers(headers)
         
-        let parameters: [String : Any] = ["id" : 15,
-                                          "userId": 21,
-                                          "products" : [
-                                            ["id":1, "title":"Dream1", "price": 2.0, "description": "AAAA", "category":"T", "image": "123123"],
-                                            ["id":2, "title":"Dream2", "price": 3.0, "description": "BBBB", "category":"T", "image": "123123"]]]
-        Spark.default
-            .request(url: "https://fakestoreapi.com/carts",
-                     method: .post,
-                     encoding: JSONEncoding.default,
-                     parameters: parameters,
-                     headers: [.contentType("application/json")])
+        let request: RequestConvertibleModel<Model1> = .init(convert: "https://api.vvhan.com/api/ian/rand", method: .get, encoding: URLEncoding.default).headers(headers).parameters(parameters)
+        
+        
+        Spark.default.request(at: request)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
                     print(error.localizedDescription)
                 }
                 token.unseal()
-            } receiveValue: {  data in
-                print(String(data: data, encoding: .utf8)!)
+            } receiveValue: { data in
+                print(data)
             }.sk.seal(token)
     }
+    
 }
+
+extension ContentView {
+    
+    protocol Result: Codable {
+        var success: Bool { get set }
+        var type: String { get set }
+    }
+
+    protocol Data: Codable {
+        var `id`: Int { get set }
+        var content: String { get set }
+    }
+    
+    //  rand | dongman | wenxue | shici
+    struct Model1: ContentView.Result {
+        var success: Bool
+        var type: String
+        var data: Data
+
+        struct Data: ContentView.Data {
+            var id: Int
+            var form: String
+            var creator: String
+            var content: String
+        }
+    }
+}
+
+
+
+
 #Preview {
     ContentView()
 }

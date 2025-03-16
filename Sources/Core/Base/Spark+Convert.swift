@@ -16,7 +16,7 @@ public protocol URLConvert: Sendable {
     ///
     /// - Returns: The `URL` created from the instance.
     /// - Throws:  Any error thrown while creating the `URL`.
-    func skURL() throws -> URL
+    func urlConvert() throws -> URL
 }
 
 /// Types adopting the `URLRequestConvert` protocol can be used to safely construct `URLRequest`s.
@@ -26,8 +26,9 @@ public protocol URLRequestConvert: Sendable {
     ///
     /// - Returns: A `URLRequest`.
     /// - Throws:  Any error thrown while constructing the `URLRequest`.
-    func skURLRequest() throws -> URLRequest
+    func urlRequestConvert() throws -> URLRequest
 }
+
 
 // MARK: - String: URLConvert Extension
 extension String: URLConvert {
@@ -36,7 +37,7 @@ extension String: URLConvert {
     ///
     /// - Returns: The `URL` initialized with `self`.
     /// - Throws:  An `Error.invalidURL` instance.
-    public func skURL() throws -> URL {
+    public func urlConvert() throws -> URL {
         guard let url = URL(string: self) else { throw Error.invalidURL(url: self) }
         return url
     }
@@ -46,7 +47,7 @@ extension String: URLConvert {
 extension URL: URLConvert {
 
     /// Returns `self`.
-    public func skURL() throws -> URL { self }
+    public func urlConvert() throws -> URL { self }
 }
 
 // MARK: - URLComponents: URLConvert
@@ -56,7 +57,7 @@ extension URLComponents: URLConvert {
     ///
     /// - Returns: The `URL` from the `url` property.
     /// - Throws:  An `Error.invalidURL` instance.
-    public func skURL() throws -> URL {
+    public func urlConvert() throws -> URL {
         guard let url else { throw Error.invalidURL(url: self) }
         return url
     }
@@ -66,14 +67,14 @@ extension URLComponents: URLConvert {
 extension URLRequestConvert {
 
     /// The `URLRequest` returned by discarding any `Error` encountered.
-    public var urlRequest: URLRequest? { try? skURLRequest() }
+    public var urlRequest: URLRequest? { try? urlRequestConvert() }
 }
 
 // MARK: - URLRequest: URLRequestConvert
 extension URLRequest: URLRequestConvert {
 
     /// Returns `self`.
-    public func skURLRequest() throws -> URLRequest { self }
+    public func urlRequestConvert() throws -> URLRequest { self }
 }
 
 // MARK: - URLRequest Extension
@@ -87,7 +88,7 @@ extension URLRequest {
     ///   - headers: The `Headers`, `nil` by default.
     /// - Throws:    Any error thrown while converting the `URLRequest` to a `URL`.
     public init(url: any URLConvert, method: Method, headers: Headers? = nil) throws {
-        let url = try url.skURL()
+        let url = try url.urlConvert()
         self.init(url: url)
         httpMethod = method.rawValue
         allHTTPHeaderFields = headers?.dictionary
