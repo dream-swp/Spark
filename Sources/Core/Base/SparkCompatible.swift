@@ -42,6 +42,9 @@ extension SparkCompatible {
     }
 }
 
+// MARK: - Spark: SparkCompatible
+extension Spark: SparkCompatible {}
+
 // MARK: - String: SparkCompatible
 extension String: SparkCompatible {}
 

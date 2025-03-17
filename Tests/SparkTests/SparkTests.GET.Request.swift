@@ -199,7 +199,7 @@ final class SparkTestsGETRequest: SparkTests {
         // Given, When
         let token: Token = .init()
         let convertible: RequestConvertible = .get { "" }.parameters(parameters).headers(headers)
-        
+
         // Then
         sk.get(in: convertible)
             .sink { complete in
@@ -270,12 +270,12 @@ extension SparkTests {
 
     }
 
-    protocol Result: Codable {
+    fileprivate protocol Result: Codable {
         var success: Bool { get set }
         var type: String { get set }
     }
 
-    protocol Data: Codable {
+    fileprivate protocol Data: Codable {
         var `id`: Int { get set }
         var content: String { get set }
     }
@@ -310,7 +310,7 @@ extension SparkTests {
     }
 
     // joke
-    struct Model3: SparkTests.Result {
+    fileprivate struct Model3: SparkTests.Result {
 
         var success: Bool
         var type: String

@@ -12,7 +12,7 @@ import XCTest
 final class SparkTestsJSONEncoding: SparkTests {
 
     private let encoding = JSONEncoding.default
-    private var urlRequest: URLRequest {  try! .init(url: "wwww.test.com", method: .post) }
+    private var urlRequest: URLRequest { try! .init(url: "wwww.test.com", method: .post) }
 
     func test_JSONEncoding_EncodeNilParameters() throws {
 
