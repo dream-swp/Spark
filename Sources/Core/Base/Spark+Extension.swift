@@ -38,11 +38,15 @@ extension SK where SK == Spark {
         return try JSONSerialization.data(withJSONObject: jsonObject, options: opt)
     }
     
-//    var jsonData: JSONData {
-////        
-//        return { jsonObject in  in
-//            try?  jsonData($0, options: []);
-//    }
+    ///  Returns JSON data from a Foundation object.
+    var jsonData: JSONData {
+        return {
+            guard let data  = try? jsonData($0(), options: []) else {
+                return nil
+            }
+            return data
+        }
+    }
 }
 
 // MARK: - Token
@@ -96,6 +100,7 @@ extension SK where SK == JSONEncoder {
 extension SK where SK == Data {
 
     public typealias SparkJSONOptions = (_ options: () -> JSONSerialization.ReadingOptions) -> Any?
+    
     /// Data Convert to String
     public var string: String {
         String(data: sk, encoding: .utf8) ?? ""
