@@ -8,65 +8,65 @@
 import Foundation
 
 // MARK: - ConvertibleConvenience
+/// ConvertibleConvenience
 public protocol ConvertibleConvenience: Sendable {
-    
+
+    /// ConvertibleConvenience closure
     typealias Convert = (_ convert: () -> any URLConvert) -> Self
-    
+
     /// convenience, init
     /// - Parameters:
     ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
     ///   - method:     `Method` for the `URLRequest`. `.get` by default.
     ///   - encoding:   `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest
     init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding)
-    
+
 }
 
+// MARK: - ConvertibleConvenience Extension
 extension ConvertibleConvenience {
-    
+
     /// convenience: GET Request
     public static var get: Convert {
-        return {  self.init(convert: $0(), method: .get, encoding: URLEncoding.default)  }
+        return { self.init(convert: $0(), method: .get, encoding: URLEncoding.default) }
     }
-    
+
     /// convenience: POST Request
     public static var post: Convert {
-        return {  self.init(convert: $0(), method: .post, encoding: JSONEncoding.default)  }
+        return { self.init(convert: $0(), method: .post, encoding: JSONEncoding.default) }
     }
 }
 
 // MARK: - Convertible
-/// Convertible
-public protocol Convertible: URLRequestConvert, Sendable, AnyObject {
-    
-    associatedtype Model: Codable
-   
+///// Convertible
+public protocol Convertible: URLRequestConvert, Sendable, AnyObject {}
+
+// MARK: - ConvertibleData
+/// ConvertibleData
+public protocol ConvertibleData: Convertible, Sendable, AnyObject {
+
     ///  `URLConvert` value to be used as the `URLRequest`'s `URL`.
     var convert: any URLConvert { get set }
-    
+
     ///  method: `Method` for the `URLRequest`.
     var method: Method { get set }
-    
+
     /// encoding: `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`, `URLEncoding.default` by default.
     var encoding: any ParameterEncoding { get set }
-    
+
     /// parameters: `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
     var parameters: Parameters? { get set }
-    
+
     /// headers: `Headers` value to be added to the `URLRequest`. `nil` by default.
     var headers: Headers? { get set }
-    
+
     /// requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from
     var requestModifier: RequestModifier? { get set }
-    
-    /// decoder: `JSONDecoder`, Model JSON parsing format
-    var decoder: JSONDecoder { get set }
-    
-    /// model: `Model` Convert to model data
-    var model: Model.Type { get }
+
 }
 
-// MARK: - Convertible: URLRequestConvert
-extension Convertible {
+// MARK: - ConvertibleData: URLRequestConvert
+extension ConvertibleData {
     public func urlRequestConvert() throws -> URLRequest {
         var request = try URLRequest(url: convert, method: method, headers: headers)
         try requestModifier?(&request)
@@ -74,8 +74,8 @@ extension Convertible {
     }
 }
 
-// MARK: - Convertible Extension
-extension Convertible {
+// MARK: - ConvertibleData Extension
+extension ConvertibleData {
 
     /// Update method
     /// - Parameter convert: URLConvert
@@ -130,6 +130,23 @@ extension Convertible {
         self.requestModifier = requestModifier
         return self
     }
+}
+
+// MARK: - ConvertibleModel
+/// ConvertibleModel
+public protocol ConvertibleModel: ConvertibleData, Sendable, AnyObject {
+    associatedtype Model: Codable
+
+    /// decoder: `JSONDecoder`, Model JSON parsing format
+    var decoder: JSONDecoder { get set }
+
+    /// model: `Model` Convert to model data
+    var model: Model.Type { get }
+}
+
+// MARK: - ConvertibleModel Extension
+/// ConvertibleModel
+extension ConvertibleModel {
 
     /// Update model
     /// - Parameter decoder: decoder
@@ -139,14 +156,11 @@ extension Convertible {
         self.decoder = decoder
         return self
     }
-    
 }
 
-
 // MARK: - RequestConvertible
-public class RequestConvertible: Convertible, ConvertibleConvenience, @unchecked Sendable {
-    
-    public typealias Model = Data
+/// RequestConvertible
+public class RequestConvertible: ConvertibleData, ConvertibleConvenience, @unchecked Sendable {
     
     ///  `URLConvert` value to be used as the `URLRequest`'s `URL`.
     public var convert: any URLConvert
@@ -168,9 +182,7 @@ public class RequestConvertible: Convertible, ConvertibleConvenience, @unchecked
 
     /// decoder: `JSONDecoder`, Model JSON parsing format
     public var decoder: JSONDecoder = JSONDecoder.sk.decoder
-    
-    /// model: `Model` Convert to model data
-    public var model: Data.Type { Data.self }
+
 
     /// Creates a `Request` from a `URLRequest` created using the passed components, `Encodable` parameters
     /// - Parameters:
@@ -189,7 +201,7 @@ public class RequestConvertible: Convertible, ConvertibleConvenience, @unchecked
         self.headers = headers
         self.requestModifier = requestModifier
     }
-    
+
     /// convenience, init.RequestConvertible
     /// - Parameters:
     ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
@@ -200,10 +212,10 @@ public class RequestConvertible: Convertible, ConvertibleConvenience, @unchecked
     }
 }
 
-
 // MARK: - RequestConvertibleModel
-public class RequestConvertibleModel<Item: Codable>: Convertible, ConvertibleConvenience, @unchecked Sendable {
-  
+public class RequestConvertibleModel<Item: Codable>: ConvertibleModel, ConvertibleConvenience, @unchecked Sendable {
+
+    /// Model `Convert` to model data
     public typealias Model = Item
 
     ///  `URLConvert` value to be used as the `URLRequest`'s `URL`.
@@ -226,7 +238,7 @@ public class RequestConvertibleModel<Item: Codable>: Convertible, ConvertibleCon
 
     /// decoder: `JSONDecoder`, Model JSON parsing format
     public var decoder: JSONDecoder = JSONDecoder.sk.decoder
-    
+
     /// model: `Model` Convert to model data
     public var model: Item.Type {
         Item.self
@@ -251,7 +263,7 @@ public class RequestConvertibleModel<Item: Codable>: Convertible, ConvertibleCon
         self.requestModifier = requestModifier
         self.decoder = decoder
     }
-    
+
     /// convenience, init.RequestConvertibleModel<Model>
     /// - Parameters:
     ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
@@ -260,7 +272,7 @@ public class RequestConvertibleModel<Item: Codable>: Convertible, ConvertibleCon
     public required convenience init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding) {
         self.init(convert: convert, method: method, encoding: encoding, parameters: nil, headers: nil, requestModifier: nil, decoder: JSONDecoder.sk.decoder)
     }
-    
+
 }
 
 // MARK: -

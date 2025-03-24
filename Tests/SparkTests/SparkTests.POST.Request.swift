@@ -17,7 +17,8 @@ final class SparkTestsPOSTRequest: SparkTests {
         // Given
         let token: Token = .init()
 
-        sk.post(url, parameters:parameters, headers: headers)
+        // When
+        sk.post(url, parameters: parameters, headers: headers)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -30,19 +31,19 @@ final class SparkTestsPOSTRequest: SparkTests {
                 print(data.sk.string)
                 if let jsonObject = data.sk.jsonObject as? [String: Any] {
                     print(jsonObject)
-                    //                    let a = self.sk.sk.jsonData { jsonObject }
-                    //                    print("a?.sk.jsonObject = \(a?.sk.jsonObject as? [String : Any])")
                 }
 
                 XCTAssertNotNil(data)
             }.sk.seal(token)
 
     }
-    
+
     func test_post2() throws {
-        
+
+        // Given
         let token: Token = .init()
-        
+
+        // When
         sk.post(url, parameters: parameters, headers: headers, model: ApifoxPost.self)
             .receive(on: DispatchQueue.main)
             .sink { complete in
@@ -52,9 +53,62 @@ final class SparkTestsPOSTRequest: SparkTests {
                 }
                 token.unseal()
             } receiveValue: {
+                print("\r\(#function) -> \(self.url) : ")
                 print($0)
                 XCTAssertNotNil($0)
             }.sk.seal(token)
+    }
+
+    func test_post3() throws {
+
+        // Given
+        let token: Token = .init()
+
+        // When
+        let convertible = RequestConvertible.post { url }
+        convertible.parameters = parameters
+        convertible.headers = headers
+
+        // Then
+        sk.post(in: convertible)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                    XCTAssertThrowsError(error)
+                }
+                token.unseal()
+            } receiveValue: {
+                print("\r\(#function) -> \(self.url) : ")
+                print($0)
+                XCTAssertNotNil($0)
+            }.sk.seal(token)
+
+    }
+
+    func test_post4() throws {
+        
+        // Given
+        let token: Token = .init()
+
+        // When
+        let convertible = RequestConvertibleModel<ApifoxPost>.post { url }.parameters(parameters).headers(headers)
+        
+        // Then
+        sk.post(in: convertible)
+            .receive(on: DispatchQueue.main)
+            .sink { complete in
+                if case .failure(let error) = complete {
+                    print(error.localizedDescription)
+                    XCTAssertThrowsError(error)
+                }
+                token.unseal()
+            } receiveValue: {
+                print("\r\(#function) -> \(self.url) : ")
+                print($0)
+                XCTAssertNotNil($0)
+            }.sk.seal(token)
+
     }
 
 }
@@ -66,7 +120,7 @@ extension SparkTestsPOSTRequest {
     fileprivate var headers: Headers { [.contentType(.application(.json))] }
 
     fileprivate struct ApifoxPost: Codable {
-        
+
         let args: [String: String]
         let data: String
         let files: [String: String]
@@ -77,7 +131,7 @@ extension SparkTestsPOSTRequest {
         let url: String
 
         struct Headers: Codable {
-            
+
             let accept: String
             let acceptEncoding: String
             let acceptLanguage: String
@@ -113,3 +167,4 @@ extension SparkTestsPOSTRequest {
         }
     }
 }
+

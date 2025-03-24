@@ -12,6 +12,8 @@ import Foundation
 public typealias RequestModifier = @Sendable (inout URLRequest) throws -> Void
 // Response Data
 public typealias ResponseData = AnyPublisher<Data, Swift.Error>
+// Response Any
+public typealias ResponseAny = AnyPublisher<Any, Swift.Error>
 // Response Model
 public typealias ResponseModel<Model> = AnyPublisher<Model, Swift.Error> where Model: Codable
 
@@ -40,7 +42,7 @@ extension Spark {
     /// Creates a `GET Request` from a `URLRequest` created using the passed components, `Convertible` parameters
     /// - Parameter config:     `Convertible` Request parameter configuration
     /// - Returns:              `ResponseData` Return request data
-    public func get<Request: Convertible>(in config: Request) -> ResponseData {
+    public func get<Request: ConvertibleData>(in config: Request) -> ResponseData {
         request(in: config.method(.get).requestModifier(nil))
     }
     
@@ -61,7 +63,7 @@ extension Spark {
     /// Creates a `GET Request` Convenient Method
     /// - Parameter config: `Convertible` Request parameter configuration
     /// - Returns:          `ResponseModel` Return request data `ResponseModel<Model>`
-    public func get<Request: Convertible>(at config: Request) -> ResponseModel<Request.Model> {
+    public func get<Request: ConvertibleModel>(at config: Request) -> ResponseModel<Request.Model> {
         request(at:  config.method(.get).requestModifier(nil))
     }
     
@@ -85,7 +87,7 @@ extension Spark {
     /// Creates a `POST Request` from a `URLRequest` created using the passed components, `Convertible` parameters
     /// - Parameter config:     `Convertible` Request parameter configuration
     /// - Returns:              `ResponseData` Return request data
-    public func post<Request: Convertible>(in config: Request) -> ResponseData {
+    public func post<Request: ConvertibleData>(in config: Request) -> ResponseData {
         request(in: config.method(.post).requestModifier(nil))
     }
     
@@ -105,7 +107,7 @@ extension Spark {
     /// Creates a `POST Request` Convenient Method
     /// - Parameter config: `Convertible` Request parameter configuration
     /// - Returns:          `ResponseModel` Return request data `ResponseModel<Model>`
-    public func post<Request: Convertible>(at config: Request) -> ResponseModel<Request.Model> {
+    public func post<Request: ConvertibleModel>(at config: Request) -> ResponseModel<Request.Model> {
         request(at:  config.method(.post).requestModifier(nil))
     }
     
@@ -135,10 +137,8 @@ extension Spark {
     /// Creates a `Request` from a `URLRequest` created using the passed components, `Convertible` parameters
     /// - Parameter config:     `Convertible` Request parameter configuration
     /// - Returns:              `ResponseModel` Return request data `ResponseModel<Model>`
-    public func request<Request: Convertible>(at config: Request) -> ResponseModel<Request.Model> {
-        return self.request(config)
-            .decode(type: config.model, decoder: config.decoder)
-            .eraseToAnyPublisher()
+    public func request<Request: ConvertibleModel>(at config: Request) -> ResponseModel<Request.Model> {
+        self.request(model: config)
     }
     
     
@@ -160,8 +160,8 @@ extension Spark {
     /// Creates a `Request` from a `URLRequest` created using the passed components, `Convertible` parameters
     /// - Parameter config:      `Convertible` Request parameter configuration
     /// - Returns:              `ResponseData` Return request data
-    public func request<Request: Convertible>(in config: Request) -> ResponseData {
-        self.request(config)
+    public func request<Request: ConvertibleData>(in config: Request) -> ResponseData {
+        self.request(data: config)
     }
     
 }
@@ -170,7 +170,24 @@ extension Spark {
 extension Spark {
     
     /// Creates a `Request` from a `URLRequest` created using the passed components, `Convertible` parameters
-    /// - Parameter config:      `Convertible` Request parameter configuration
+    /// - Parameter model:  `ConvertibleModel` Request parameter configuration
+    /// - Returns:          `ResponseModel` Return request data
+    internal func request<RequestModel: ConvertibleModel>(model request: RequestModel) -> ResponseModel<RequestModel.Model> {
+        return self.request(request)
+            .decode(type: request.model, decoder: request.decoder)
+            .eraseToAnyPublisher()
+    }
+    
+    
+    /// Creates a `Request` from a `URLRequest` created using the passed components, `Convertible` parameters
+    /// - Parameter data:   `ConvertibleData` Request parameter configuration
+    /// - Returns:          `ResponseData` Return request data
+    internal func request<RequestData: ConvertibleData>(data request: RequestData) -> ResponseData {
+        self.request(request)
+    }
+    
+    /// Creates a `Request`     from a `URLRequest` created using the passed components, `Convertible` parameters
+    /// - Parameter request:    `Convertible` Request parameter configuration
     /// - Returns:              `ResponseData` Return request data
     internal func request<Request: Convertible>(_ request: Request) -> ResponseData {
         

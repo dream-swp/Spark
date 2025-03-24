@@ -13,7 +13,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Button {
-                post()
+                test()
             } label: {
                 Text("GET")
             }
@@ -32,7 +32,7 @@ extension ContentView {
         let request: RequestConvertible = .init(convert: "https://api.vvhan.com/api/ian/rand", method: .get, encoding: URLEncoding.default).parameters(parameters).headers(headers)
         
         
-        Spark.default.request(at:request)
+        Spark.default.request(in: request)
             .receive(on: DispatchQueue.main)
             .sink { complete in
                 if case .failure(let error) = complete {
@@ -68,7 +68,7 @@ extension ContentView {
         let token: Token = .init()
         let url = "https://echo.apifox.com/post"
         
-        var parameters: [String : Any] = ["name" : "Dream", "age" : 18, "acction" : "dream1213"]
+        let parameters: [String : Any] = ["name" : "Dream", "age" : 18, "acction" : "dream1213"]
         
         
         Spark.default.post(url, parameters: parameters, headers: [.contentType(.application(.json))])
@@ -82,9 +82,9 @@ extension ContentView {
                 print("\r\(#function) -> \(url) : ")
                 print(data.sk.string)
                 let a = data.sk.jsonObjectOptions { .fragmentsAllowed }!
-                if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                if let jsonObject = try? JSONSerialization.jsonObject(with: data)  {
                     print(jsonObject)
-                    print(jsonObject["headers"]!)
+//                    print(jsonObject["headers"]!)
                 }
             }.sk.seal(token)
     }
