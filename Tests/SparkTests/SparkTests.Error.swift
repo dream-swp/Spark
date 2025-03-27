@@ -14,7 +14,7 @@ final class SparkTestsError: SparkTests {
     func test_error_urlError() {
 
         // Given, When
-        let error = Error.urlError
+        let error = SKError.urlError
 
         // Then
         XCTAssertEqual(error.localizedDescription, "Request URL Error")
@@ -23,7 +23,7 @@ final class SparkTestsError: SparkTests {
     func test_error_invalidResponse() {
 
         // Given, When
-        let error = Error.invalidResponse
+        let error = SKError.invalidResponse
 
         // Then
         XCTAssertEqual(error.localizedDescription, "Invalid response to the request.")
@@ -32,7 +32,7 @@ final class SparkTestsError: SparkTests {
     func test_error_invalidURL() {
 
         // Given, When
-        let error = Error.invalidURL(url: "WERTYUIOPASDFGHJKLZXCVBNM")
+        let error = SKError.invalidURL(url: "WERTYUIOPASDFGHJKLZXCVBNM")
 
         // Then
         XCTAssertEqual(error.localizedDescription, "URL is not valid: WERTYUIOPASDFGHJKLZXCVBNM")
@@ -41,7 +41,7 @@ final class SparkTestsError: SparkTests {
     func test_error_parameterEncodingFailed_missingURL() {
 
         // Given, When
-        let error = Error.parameterEncodingFailed(reason: .missingURL)
+        let error = SKError.parameterEncodingFailed(reason: .missingURL)
 
         // Then
         XCTAssertEqual(error.localizedDescription, "URL request to encode was missing a URL")
@@ -50,7 +50,7 @@ final class SparkTestsError: SparkTests {
     func test_error_parameterEncodingFailed_jsonEncodingFailed() {
 
         // Given, When
-        let error = Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: Error.ParameterEncodingFailureReason.missingURL))
+        let error = SKError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: SKError.ParameterEncodingFailureReason.missingURL))
 
         // Then
         XCTAssertTrue(error.localizedDescription.contains("JSON could not be encoded because of error: \n "))
@@ -59,7 +59,7 @@ final class SparkTestsError: SparkTests {
     func test_error_parameterEncodingFailed_customEncodingFailed() {
 
         // Given, When
-        let error = Error.parameterEncodingFailed(reason: .customEncodingFailed(error: Error.invalidResponse))
+        let error = SKError.parameterEncodingFailed(reason: .customEncodingFailed(error: SKError.invalidResponse))
 
         // Then
         XCTAssertTrue(error.localizedDescription.contains("Custom parameter encoder failed with error: \n "))
@@ -73,7 +73,7 @@ final class SparkTestsError: SparkTests {
             This is most likely due to a value which can't be represented in Objective-C.
             """
         // When
-        let error = Error.JSONEncodingError.invalidJSONObject
+        let error = SKError.JSONEncodingError.invalidJSONObject
 
         // Then
         XCTAssertEqual(error.localizedDescription, errorString)

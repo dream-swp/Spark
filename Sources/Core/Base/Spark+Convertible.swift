@@ -19,7 +19,7 @@ public protocol ConvertibleConvenience: Sendable {
     ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
     ///   - method:     `Method` for the `URLRequest`. `.get` by default.
     ///   - encoding:   `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest
-    init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding)
+    init(convert: any URLConvert, method: SKMethod, encoding: any ParameterEncoding)
 
 }
 
@@ -49,7 +49,7 @@ public protocol ConvertibleData: Convertible, Sendable, AnyObject {
     var convert: any URLConvert { get set }
 
     ///  method: `Method` for the `URLRequest`.
-    var method: Method { get set }
+    var method: SKMethod { get set }
 
     /// encoding: `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`, `URLEncoding.default` by default.
     var encoding: any ParameterEncoding { get set }
@@ -90,7 +90,7 @@ extension ConvertibleData {
     /// - Parameter method: Method
     /// - Returns: the current calling object
     @discardableResult
-    public func method(_ method: Method) -> Self {
+    public func method(_ method: SKMethod) -> Self {
         self.method = method
         return self
     }
@@ -166,7 +166,7 @@ public class RequestConvertible: ConvertibleData, ConvertibleConvenience, @unche
     public var convert: any URLConvert
 
     ///  method: `Method` for the `URLRequest`.
-    public var method: Method
+    public var method: SKMethod
 
     /// encoding: `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`
     public var encoding: any ParameterEncoding
@@ -193,7 +193,7 @@ public class RequestConvertible: ConvertibleData, ConvertibleConvenience, @unche
     ///   - headers:            `Headers` value to be added to the `URLRequest`. `nil` by default.
     ///   - requestModifier:    `RequestModifier` which will be applied to the `URLRequest` created from
     ///   - decoder:            `JSONDecoder`, Model JSON parsing format
-    public init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil) {
+    public init(convert: any URLConvert, method: SKMethod, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil) {
         self.convert = convert
         self.method = method
         self.encoding = encoding
@@ -207,7 +207,7 @@ public class RequestConvertible: ConvertibleData, ConvertibleConvenience, @unche
     ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
     ///   - method:     `Method` for the `URLRequest`. `.get` by default.
     ///   - encoding:   `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest
-    public required convenience init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding) {
+    public required convenience init(convert: any URLConvert, method: SKMethod, encoding: any ParameterEncoding) {
         self.init(convert: convert, method: method, encoding: encoding, parameters: nil, headers: nil, requestModifier: nil)
     }
 }
@@ -222,7 +222,7 @@ public class RequestConvertibleModel<Item: Codable>: ConvertibleModel, Convertib
     public var convert: any URLConvert
 
     ///  method: `Method` for the `URLRequest`.
-    public var method: Method
+    public var method: SKMethod
 
     /// encoding: `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`
     public var encoding: any ParameterEncoding
@@ -254,7 +254,7 @@ public class RequestConvertibleModel<Item: Codable>: ConvertibleModel, Convertib
     ///   - requestModifier:    `RequestModifier` which will be applied to the `URLRequest` created from
     ///   - model:              `Model` Convert to model data
     ///   - decoder:            `JSONDecoder`, Model JSON parsing format
-    public init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil, decoder: JSONDecoder = JSONDecoder.sk.decoder) {
+    public init(convert: any URLConvert, method: SKMethod, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil, decoder: JSONDecoder = JSONDecoder.sk.decoder) {
         self.convert = convert
         self.method = method
         self.encoding = encoding
@@ -269,7 +269,7 @@ public class RequestConvertibleModel<Item: Codable>: ConvertibleModel, Convertib
     ///   - convert:    `URLConvert` value to be used as the `URLRequest`'s `URL`.
     ///   - method:     `Method` for the `URLRequest`. `.get` by default.
     ///   - encoding:   `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest
-    public required convenience init(convert: any URLConvert, method: Method, encoding: any ParameterEncoding) {
+    public required convenience init(convert: any URLConvert, method: SKMethod, encoding: any ParameterEncoding) {
         self.init(convert: convert, method: method, encoding: encoding, parameters: nil, headers: nil, requestModifier: nil, decoder: JSONDecoder.sk.decoder)
     }
 

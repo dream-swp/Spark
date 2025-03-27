@@ -27,7 +27,7 @@ final class SparkTestsURLRequest: SparkTests {
         let urlRequest = try URLRequest(url: url, method: .get, headers: [.accept("accept"), .userAgent("userAgent")])
 
         // Then
-        XCTAssertEqual(urlRequest.httpMethod, Method.get.rawValue)
+        XCTAssertEqual(urlRequest.httpMethod, SKMethod.get.rawValue)
     }
 
     func test_error_URLRequest_get2() throws {
@@ -50,7 +50,7 @@ final class SparkTestsURLRequest: SparkTests {
         let urlRequest = try URLRequest(url: url(url), method: .post, headers: header)
 
         // Then
-        XCTAssertEqual(urlRequest.httpMethod, Method.post.rawValue)
+        XCTAssertEqual(urlRequest.httpMethod, SKMethod.post.rawValue)
         XCTAssertEqual(urlRequest.allHTTPHeaderFields, header.dictionary)
     }
 

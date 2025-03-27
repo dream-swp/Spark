@@ -60,7 +60,7 @@ extension URLEncoding {
         /// Method of Judging Request
         /// - Parameter method:`get`, `post` DSMethod
         /// - Returns: contains
-        func encodesParametersInURL(for method: Method) -> Bool {
+        func encodesParametersInURL(for method: SKMethod) -> Bool {
             switch self {
             case .methodDependent: [method].contains(.get)
             case .queryString: true
@@ -152,7 +152,7 @@ extension URLEncoding: ParameterEncoding {
 
         if let method = urlRequest.method, destination.encodesParametersInURL(for: method) {
 
-            guard let url = urlRequest.url else { throw Error.parameterEncodingFailed(reason: .missingURL) }
+            guard let url = urlRequest.url else { throw SKError.parameterEncodingFailed(reason: .missingURL) }
 
             if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), !parameters.isEmpty {
                 let percentEncodedQuery = (urlComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)

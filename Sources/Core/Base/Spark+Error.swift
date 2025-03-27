@@ -8,7 +8,7 @@
 import Foundation
 
 /// `Error` is the error type returned by
-public enum Error: Swift.Error {
+public enum SKError: Swift.Error {
     /// Request URL Error
     case urlError
 
@@ -24,7 +24,7 @@ public enum Error: Swift.Error {
 }
 
 // MARK: - Error: Public
-extension Error {
+extension SKError {
 
     /// Returns whether the instance is `.urlError`.
     public var isURLError: Bool {
@@ -53,10 +53,10 @@ extension Error {
 }
 
 // MARK: - Error: Sendable
-extension Error: Sendable {}
+extension SKError: Sendable {}
 
 // MARK: - Error: LocalizedError
-extension Error: LocalizedError {
+extension SKError: LocalizedError {
     var localizedDescription: String {
         switch self {
         case .urlError: "Request URL Error"
@@ -68,7 +68,7 @@ extension Error: LocalizedError {
 }
 
 // MARK: - Error.ParameterEncodingFailureReason
-extension Error {
+extension SKError {
 
     /// The underlying reason the `.parameterEncodingFailed` error occurred.
     public enum ParameterEncodingFailureReason: Sendable {
@@ -82,7 +82,7 @@ extension Error {
 }
 
 // MARK: - Error.ParameterEncodingFailureReason: LocalizedError
-extension Error.ParameterEncodingFailureReason: LocalizedError {
+extension SKError.ParameterEncodingFailureReason: LocalizedError {
 
     var localizedDescription: String {
         switch self {
@@ -94,14 +94,14 @@ extension Error.ParameterEncodingFailureReason: LocalizedError {
 }
 
 // MARK: - Error.JSONEncodingError
-extension Error {
+extension SKError {
     public enum JSONEncodingError: Sendable {
         case invalidJSONObject
     }
 }
 
 // MARK: - Error.JSONEncodingError: LocalizedError
-extension Error.JSONEncodingError: LocalizedError {
+extension SKError.JSONEncodingError: LocalizedError {
     var localizedDescription: String {
         """
         Invalid JSON object provided for parameter or object encoding. \

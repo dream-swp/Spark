@@ -7,28 +7,35 @@
 
 // MARK: - Method
 /// Request Method
-public enum Method: (String) {
+public enum SKMethod: RawRepresentable, Equatable, Hashable, Sendable {
 
     /// `GET` method.
-    case get = "GET"
+    case get
 
     /// `POST` method.
-    case post = "POST"
+    case post
 
-    /// `Header` Initialization method
+    /// `customize` method.
+    case customize(String)
+
+    /// `SKMethod` Initialization method
     /// - Parameter rawValue: Method String
-    public init(_ rawValue: String) {
+    public init(rawValue: String) {
         switch rawValue {
         case "GET":
             self = .get
         case "POST":
             self = .post
         default:
-            self = .get
+            self = .customize(rawValue)
+        }
+    }
+
+    public var rawValue: RawValue {
+        switch self {
+        case .get: "GET"
+        case .post: "POST"
+        case .customize(let value): value
         }
     }
 }
-
-// MARK: - Method: Sendable
-extension Method: Sendable {}
-// MARK: -

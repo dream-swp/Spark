@@ -38,7 +38,7 @@ extension String: URLConvert {
     /// - Returns: The `URL` initialized with `self`.
     /// - Throws:  An `Error.invalidURL` instance.
     public func urlConvert() throws -> URL {
-        guard let url = URL(string: self) else { throw Error.invalidURL(url: self) }
+        guard let url = URL(string: self) else { throw SKError.invalidURL(url: self) }
         return url
     }
 }
@@ -58,7 +58,7 @@ extension URLComponents: URLConvert {
     /// - Returns: The `URL` from the `url` property.
     /// - Throws:  An `Error.invalidURL` instance.
     public func urlConvert() throws -> URL {
-        guard let url else { throw Error.invalidURL(url: self) }
+        guard let url else { throw SKError.invalidURL(url: self) }
         return url
     }
 }
@@ -87,7 +87,7 @@ extension URLRequest {
     ///   - method:  The `Method`.
     ///   - headers: The `Headers`, `nil` by default.
     /// - Throws:    Any error thrown while converting the `URLRequest` to a `URL`.
-    public init(url: any URLConvert, method: Method, headers: Headers? = nil) throws {
+    public init(url: any URLConvert, method: SKMethod, headers: Headers? = nil) throws {
         let url = try url.urlConvert()
         self.init(url: url)
         httpMethod = method.rawValue
@@ -95,9 +95,9 @@ extension URLRequest {
     }
 
     /// Returns the `Method` as `Method` type.
-    public var method: Method? {
+    public var method: SKMethod? {
         set { httpMethod = newValue?.rawValue }
-        get { httpMethod.map(Method.init) }
+        get { httpMethod.map(SKMethod.init) }
     }
 
     /// Returns the `Headers` as `Headers`

@@ -13,17 +13,17 @@ class RequestParameter: ConvertibleData, @unchecked Sendable {
 
     var convert: any URLConvert
 
-    var method: Method
+    var method: SKMethod
 
     var encoding: any ParameterEncoding
 
     var parameters: Parameters?
 
     var headers: Headers?
-    
+
     var requestModifier: RequestModifier?
 
-    init(url: RequestURL, method: Method, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil) {
+    init(url: RequestURL, method: SKMethod, encoding: any ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil) {
         self.url = url
         self.convert = url.value
         self.method = method
@@ -32,7 +32,7 @@ class RequestParameter: ConvertibleData, @unchecked Sendable {
         self.headers = headers
         self.requestModifier = requestModifier
     }
-    
+
 }
 
 enum RequestURL {

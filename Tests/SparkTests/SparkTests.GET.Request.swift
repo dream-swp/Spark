@@ -206,7 +206,7 @@ final class SparkTestsGETRequest: SparkTests {
                 if case .failure(let error) = complete {
                     print(error.localizedDescription)
                     XCTAssertNotNil(error)
-                    XCTAssertEqual((error as? Error)?.localizedDescription, Error.urlError.localizedDescription)
+                    XCTAssertEqual((error as? SKError)?.localizedDescription, SKError.urlError.localizedDescription)
                     print("\r\(#function) -> \(error.localizedDescription) : ")
                 }
                 token.unseal()

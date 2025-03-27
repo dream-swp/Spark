@@ -301,7 +301,7 @@ final class SparkTestsURLEncoding: SparkTests {
     func test_URLEncodeing_EncodesGETParametersInURL() throws {
         // Given
         var mutableURLRequest = urlRequest
-        mutableURLRequest.httpMethod = Method.get.rawValue
+        mutableURLRequest.httpMethod = SKMethod.get.rawValue
         let parameters = ["key1": 1, "key2": 2]
 
         // When
@@ -316,7 +316,7 @@ final class SparkTestsURLEncoding: SparkTests {
     func test_URLEncodeing_EncodesPOSTParametersInHTTPBody() throws {
         // Given
         var mutableURLRequest = urlRequest
-        mutableURLRequest.httpMethod = Method.post.rawValue
+        mutableURLRequest.httpMethod = SKMethod.post.rawValue
         let parameters = ["key1": 1, "key2": 2]
 
         // When
@@ -332,7 +332,7 @@ final class SparkTestsURLEncoding: SparkTests {
     func test_URLEncodeing_InURLParameterEncodingEncodesPOSTParametersInURL() throws {
         // Given
         var mutableURLRequest = urlRequest
-        mutableURLRequest.httpMethod = Method.post.rawValue
+        mutableURLRequest.httpMethod = SKMethod.post.rawValue
         let parameters = ["key1": 1, "key2": 2]
 
         // When

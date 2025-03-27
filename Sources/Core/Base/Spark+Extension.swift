@@ -24,7 +24,7 @@ extension SK where SK == Spark {
     /// This is most likely due to a value which can't be represented in Objective-C.
     func isValidJSONObject(_ jsonObject: Any) throws {
         guard JSONSerialization.isValidJSONObject(jsonObject) else {
-            throw Error.parameterEncodingFailed(reason: .jsonEncodingFailed(error: Error.JSONEncodingError.invalidJSONObject))
+            throw SKError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: SKError.JSONEncodingError.invalidJSONObject))
         }
     }
     

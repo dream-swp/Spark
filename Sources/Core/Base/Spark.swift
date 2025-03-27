@@ -128,7 +128,7 @@ extension Spark {
     ///   - model:              `Model` Convert to model data
     ///   - decoder:            `JSONDecoder`, Model JSON parsing format
     /// - Returns:              `ResponseData` Return request data
-    public func request<Item>(_ convert: any URLConvert, method: Method, encoding: ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil, model: Item.Type, decoder: JSONDecoder = JSONDecoder.sk.decoder) -> ResponseModel<Item> {
+    public func request<Item>(_ convert: any URLConvert, method: SKMethod, encoding: ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil, model: Item.Type, decoder: JSONDecoder = JSONDecoder.sk.decoder) -> ResponseModel<Item> {
         let convertible: RequestConvertibleModel<Item> = .init(convert: convert, method: method, encoding: encoding, parameters: parameters, headers: headers, requestModifier: requestModifier, decoder: decoder)
         return request(at: convertible)
     }
@@ -151,7 +151,7 @@ extension Spark {
     ///   - headers:            `Headers` value to be added to the `URLRequest`. `nil` by default.
     ///   - requestModifier:    `RequestModifier` which will be applied to the `URLRequest` created from
     /// - Returns:              `ResponseData` Return request data
-    public func request(_ convert: any URLConvert, method: Method, encoding: ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil) -> ResponseData {
+    public func request(_ convert: any URLConvert, method: SKMethod, encoding: ParameterEncoding, parameters: Parameters? = nil, headers: Headers? = nil, requestModifier: RequestModifier? = nil) -> ResponseData {
         let convertible: RequestConvertible = .init(convert: convert, method: method, encoding: encoding, parameters: parameters, headers: headers, requestModifier: requestModifier)
         return request(in: convertible)
     }
@@ -192,7 +192,7 @@ extension Spark {
     internal func request<Request: Convertible>(_ request: Request) -> ResponseData {
         
         guard let urlRequest = request.urlRequest else {
-            return Fail(error: Error.urlError).eraseToAnyPublisher()
+            return Fail(error: SKError.urlError).eraseToAnyPublisher()
         }
         
         return URLSession
@@ -203,7 +203,7 @@ extension Spark {
                     if let log = String(data: data, encoding: .utf8) {
                         debugPrint(log)
                     }
-                    throw Error.invalidResponse
+                    throw SKError.invalidResponse
                 }
                 return data
             }

@@ -28,8 +28,6 @@ struct ResponsePostModel: Codable {
         let host: String
         let remoteip: String
         let userAgent: String
-        let xFromAlb: String
-        let xFromAlbIp: String
 
         enum CodingKeys: String, CodingKey {
             case accept = "Accept"
@@ -41,8 +39,6 @@ struct ResponsePostModel: Codable {
             case host = "Host"
             case remoteip = "Remoteip"
             case userAgent = "User-Agent"
-            case xFromAlb = "X-From-Alb"
-            case xFromAlbIp = "X-From-Alb-Ip"
         }
     }
 

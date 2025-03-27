@@ -9,4 +9,9 @@ import XCTest
 
 @testable import Spark
 
-class SparkTests: XCTestCase {}
+class SparkTests: XCTestCase {
+    
+    func test_version() {
+        XCTAssertEqual(SparkInfo.version, "1.0.0")
+    }
+}
