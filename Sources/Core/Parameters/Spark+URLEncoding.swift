@@ -58,7 +58,7 @@ extension URLEncoding {
         case httpBody
 
         /// Method of Judging Request
-        /// - Parameter method:`get`, `post` DSMethod
+        /// - Parameter method:`get`, `post` SKMethod
         /// - Returns: contains
         func encodesParametersInURL(for method: SKMethod) -> Bool {
             switch self {
