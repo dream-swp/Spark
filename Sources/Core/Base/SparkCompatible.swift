@@ -20,9 +20,9 @@ public struct SK<SK> {
     public let sk: SK
 
     /// Initialization method
-    /// - Parameter ds: DS
-    public init(_ sp: SK) {
-        self.sk = sp
+    /// - Parameter sk: SK
+    public init(_ sk: SK) {
+        self.sk = sk
     }
 }
 

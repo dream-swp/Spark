@@ -12,6 +12,6 @@ import XCTest
 class SparkTests: XCTestCase {
     
     func test_version() {
-        XCTAssertEqual(SparkInfo.version, "1.0.0")
+        XCTAssertEqual(SparkInfo.version, "1.0.1")
     }
 }
