@@ -17,7 +17,7 @@ The [Swift Package Manager](https://swift.org/package-manager/) is a tool for au
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/dream-swp/Spark.git", .upToNextMajor(from: "1.0.1"))
+    .package(url: "https://github.com/dream-swp/Spark.git", .upToNextMajor(from: "1.0.2"))
 ]
 ```
 
